@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "pyftms"
+version = "0.1.0"
+description = "PyFTMS - Python Fitness Machine Service client library."
+authors = ["Sergey V. DUDANOV <sergey.dudanov@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+bleak = "^0.22.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
