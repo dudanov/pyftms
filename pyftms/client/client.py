@@ -4,7 +4,7 @@
 import logging
 from abc import ABC
 from types import MappingProxyType
-from typing import ClassVar, Generic, TypeVar
+from typing import Any, ClassVar, Generic, TypeVar
 
 from bleak import BleakClient
 from bleak.backends.device import BLEDevice
@@ -42,6 +42,12 @@ RealtimeDataT = TypeVar("RealtimeDataT", bound=RealtimeData)
 
 
 class FitnessMachine(ABC, Generic[RealtimeDataT], PropertiesManager):
+    """
+    Base FTMS client.
+
+    Supports `async with ...` context manager.
+    """
+
     _machine_type: ClassVar[MachineType]
     """Machine type."""
 
@@ -91,63 +97,73 @@ class FitnessMachine(ABC, Generic[RealtimeDataT], PropertiesManager):
 
     # BLE SPECIFIC PROPERTIES
 
-    @property
-    def address(self) -> str:
-        return self._device.address
+    async def connect(self) -> None:
+        """
+        Opens a connection to the device. Reads necessary static information:
+        * Device Information (manufacturer, model, serial number, hardware and software versions);
+        * Supported features;
+        * Supported settings;
+        * Ranges of parameters settings.
+        """
 
-    @property
-    def is_connected(self) -> bool:
-        return self._cli is not None and self._cli.is_connected
-
-    async def connect(self):
         await self._connect()
 
     async def disconnect(self) -> None:
+        """Disconnects from device."""
+
         if self.is_connected:
             assert self._cli
             await self._disable_updates()
             await self._cli.disconnect()
 
+    @property
+    def address(self) -> str:
+        """Bluetooth address."""
+
+        return self._device.address
+
+    @property
+    def is_connected(self) -> bool:
+        """Current connection status."""
+
+        return self._cli is not None and self._cli.is_connected
+
     # COMMON BASE PROPERTIES
 
     @property
     def device_info(self) -> DeviceInfo:
+        """Device Information."""
         return self._device_info
 
     @property
     def machine_type(self) -> MachineType:
+        """Machine type."""
         return self._machine_type
-
-    @property
-    def machine_features(self) -> MachineFeatures:
-        return self._m_features
 
     @property
     def supported_properties(self) -> tuple[str, ...]:
         """
         Properties that supported by this machine.
-        Based on `Machine Features` report.
+        Based on **Machine Features** report.
 
-        May contain both meaningless properties and may not contain
-        some properties that are supported by the machine.
+        *May contain both meaningless properties and may not contain
+        some properties that are supported by the machine.*
         """
         return self._get_supported_properties(self._m_features)
 
     @property
     def available_properties(self) -> tuple[str, ...]:
-        """All properties that MAY BE supported by this machine type."""
+        """All properties that *MAY BE* supported by this machine type."""
         return self._get_supported_properties(MachineFeatures(~0))
 
     @property
-    def machine_settings(self) -> MachineSettings:
-        return self._m_settings
-
-    @property
     def supported_settings(self) -> tuple[str, ...]:
+        """Supported settings."""
         return ControlModel._get_features(self._m_settings)
 
     @property
     def supported_ranges(self) -> MappingProxyType[str, SettingRange]:
+        """Ranges of supported settings."""
         return self._settings_ranges
 
     async def _enable_updates(self) -> None:
@@ -223,49 +239,79 @@ class FitnessMachine(ABC, Generic[RealtimeDataT], PropertiesManager):
     async def pause(self) -> ResultCode:
         return await self._write_command(stop_pause=StopPauseCode.PAUSE)
 
+    async def set_setting(self, setting_id: str, *args: Any) -> ResultCode:
+        """
+        Generic method of settings by ID.
+
+        **Methods for setting specific parameters.**
+        """
+
+        if not args:
+            raise ValueError("No data to pass.")
+
+        if len(args) == 1:
+            args = args[0]
+
+        return await self._write_command(code=None, **{setting_id: args})
+
     async def set_target_speed(self, value: float) -> ResultCode:
+        """"""
         return await self._write_command(target_speed=value)
 
     async def set_target_inclination(self, value: float) -> ResultCode:
+        """"""
         return await self._write_command(target_inclination=value)
 
     async def set_target_resistance(self, value: float) -> ResultCode:
+        """"""
         return await self._write_command(target_resistance=value)
 
     async def set_target_power(self, value: int) -> ResultCode:
+        """"""
         return await self._write_command(target_power=value)
 
     async def set_target_heart_rate(self, value: int) -> ResultCode:
+        """"""
         return await self._write_command(target_heart_rate=value)
 
     async def set_target_energy(self, value: int) -> ResultCode:
+        """"""
         return await self._write_command(target_energy=value)
 
     async def set_target_steps(self, value: int) -> ResultCode:
+        """"""
         return await self._write_command(target_steps=value)
 
     async def set_target_strides(self, value: int) -> ResultCode:
+        """"""
         return await self._write_command(target_strides=value)
 
     async def set_target_distance(self, value: int) -> ResultCode:
+        """"""
         return await self._write_command(target_distance=value)
 
     async def set_target_time(self, *value: int) -> ResultCode:
+        """"""
         return await self._write_command(code=None, target_time=value)
 
     async def set_bike_simulation_params(
         self, p: IndoorBikeSimulationParameters
     ) -> ResultCode:
+        """"""
         return await self._write_command(indoor_bike_simulation=p)
 
     async def set_wheel_circumference(self, value: float) -> ResultCode:
+        """"""
         return await self._write_command(wheel_circumference=value)
 
     async def spin_down_start(self) -> ResultCode:
+        """"""
         return await self._write_command(spin_down_control=SpinDownControlCode.START)
 
     async def spin_down_ignore(self) -> ResultCode:
+        """"""
         return await self._write_command(spin_down_control=SpinDownControlCode.IGNORE)
 
     async def set_target_cadence(self, value: float) -> ResultCode:
+        """"""
         return await self._write_command(target_cadence=value)

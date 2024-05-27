@@ -11,6 +11,13 @@ from .properties import MovementDirection
 
 
 class PropertiesManager:
+    """
+    Based helper class for `FitnessMachine`. Implements access and caching of
+    properties and settings.
+
+    Do not instantinate it.
+    """
+
     _cb: FtmsCallback | None
     """Event Callback function"""
 

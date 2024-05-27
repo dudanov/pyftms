@@ -27,10 +27,14 @@ class SpinDownEventData(TypedDict, total=False):
 
 
 class SetupEventData(TypedDict, total=False):
+    """`SetupEvent` data."""
+
     indoor_bike_simulation: IndoorBikeSimulationParameters
+    """Indoor Bike Simulation Parameters."""
     target_cadence: float
     target_distance: int
     target_energy: int
+    """efqrefwerf"""
     target_heart_rate: int
     target_inclination: float
     target_power: int
@@ -119,5 +123,7 @@ class ControlEvent(NamedTuple):
 FtmsEvents = (
     UpdateEvent | SetupEvent | ControlEvent | TrainingStatusEvent | SpinDownEvent
 )
+"""Tagged union of FTMS events."""
 
 FtmsCallback = Callable[[FtmsEvents], None]
+"""Callback function to receive FTMS events."""
