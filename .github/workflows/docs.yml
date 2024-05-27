@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: pip install bleak pdoc
+        run: pip install bleak bleak-retry-connector pdoc
       - name: Run pdoc
         run: pdoc -o docs/ pyftms
 
