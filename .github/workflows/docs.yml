@@ -26,6 +26,8 @@ jobs:
         uses: abatilo/actions-poetry@v2
       - name: Install the project dependencies
         run: poetry install
+      - name: Install pdoc
+        run: pip install pdoc
       - name: Run pdoc
         run: python -m pdoc -o docs/ ...
 
