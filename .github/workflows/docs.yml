@@ -29,7 +29,7 @@ jobs:
       - name: Install pdoc
         run: pip install pdoc
       - name: Run pdoc
-        run: python -m pdoc -o docs/ ...
+        run: pdoc -o docs/ .../pyftms
 
       - uses: actions/upload-pages-artifact@v3
         with:
