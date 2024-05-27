@@ -10,6 +10,11 @@ python = ">=3.11,<3.13"
 bleak = "^0.22.1"
 bleak-retry-connector = "^3.5.0"
 
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+pdoc = "*"
 
 [build-system]
 requires = ["poetry-core"]
