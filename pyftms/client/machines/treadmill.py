@@ -10,7 +10,11 @@ from ..properties import MachineType
 
 
 class Treadmill(FitnessMachine):
-    """Treadmill"""
+    """
+    Treadmill.
+
+    Specific class of `FitnessMachine`.
+    """
 
     _machine_type: ClassVar[MachineType] = MachineType.TREADMILL
 

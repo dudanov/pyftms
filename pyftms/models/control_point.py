@@ -92,25 +92,25 @@ class ControlCode(IntEnum, boundary=STRICT):
 
 class ResultCode(IntEnum, boundary=STRICT):
     """
-    Spin Down Status.
+    Result code of control operations.
 
-    Described in section `4.17 Fitness Machine Status. Table 4.27`.
+    Described in section **4.16.2.22 Procedure Complete**.
     """
 
     SUCCESS = auto()
-    """Success"""
+    """Success."""
 
     NOT_SUPPORTED = auto()
-    """Op Code not supported"""
+    """Operation Not Supported."""
 
     INVALID_PARAMETER = auto()
-    """Invalid Parameter"""
+    """Invalid Parameter."""
 
     FAILED = auto()
-    """Operation Failed"""
+    """Operation Failed."""
 
     NOT_PERMITTED = auto()
-    """Control Not Permitted"""
+    """Control Not Permitted."""
 
 
 @dc.dataclass(frozen=True)
@@ -368,19 +368,6 @@ class ControlModel(CodeSwitchModel[ControlCode]):
                 continue
 
             if meta := cast(ModelMeta, field.metadata):
-                return object.__setattr__(self, "code", meta["code"])
+                return object.__setattr__(self, "code", meta.get("code"))
 
         raise ValueError("Code not found.")
-
-
-class ControlRequestError(Exception):
-    def __init__(self, result: ResultCode) -> None:
-        if result == ResultCode.NOT_SUPPORTED:
-            reason = "Operation not supported"
-        elif result == ResultCode.NOT_PERMITTED:
-            reason = "Operation not permitted"
-        elif result == ResultCode.INVALID_PARAMETER:
-            reason = "Invalid parameters"
-        else:
-            reason = "Operation failed"
-        super().__init__(f"Control request failed with code: {result}. {reason}.")

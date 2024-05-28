@@ -9,8 +9,12 @@ from ..const import CROSS_TRAINER_DATA_UUID
 from ..properties import MachineType
 
 
-class CrossTrainer(FitnessMachine[CrossTrainerData]):
-    """Cross Trainer (Elliptical Trainer)"""
+class CrossTrainer(FitnessMachine):
+    """
+    Cross Trainer (Elliptical Trainer).
+
+    Specific class of `FitnessMachine`.
+    """
 
     _machine_type: ClassVar[MachineType] = MachineType.CROSS_TRAINER
 

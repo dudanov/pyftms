@@ -2,22 +2,22 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-from typing import Any, Generic, cast
+from typing import Any, cast
 
 from bleak import BleakClient
 from bleak.backends.characteristic import BleakGATTCharacteristic
 
-from ...models import RealtimeDataT
+from ...models import RealtimeData
 from ...serializer import ModelSerializer, get_serializer
 from .event import FtmsCallback, UpdateEvent, UpdateEventData
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class DataUpdater(Generic[RealtimeDataT]):
-    _serializer: ModelSerializer[RealtimeDataT]
+class DataUpdater:
+    _serializer: ModelSerializer[RealtimeData]
 
-    def __init__(self, model: type[RealtimeDataT], callback: FtmsCallback) -> None:
+    def __init__(self, model: type[RealtimeData], callback: FtmsCallback) -> None:
         self._cb = callback
         self._serializer = get_serializer(model)
         self._prev: dict[str, Any] = {}

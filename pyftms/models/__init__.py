@@ -2,19 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from .common import CodeSwitchModel, IndoorBikeSimulationParameters, StopPauseCode
-from .control_point import (
-    ControlCode,
-    ControlIndicateModel,
-    ControlModel,
-    ControlRequestError,
-    ResultCode,
-)
+from .control_point import ControlCode, ControlIndicateModel, ControlModel, ResultCode
 from .machine_status import MachineStatusCode, MachineStatusModel
 from .realtime_data import (
     CrossTrainerData,
     IndoorBikeData,
     RealtimeData,
-    RealtimeDataT,
     RowerData,
     TreadmillData,
 )
@@ -33,7 +26,6 @@ __all__ = [
     "TreadmillData",
     "ControlCode",
     "ControlModel",
-    "ControlRequestError",
     "ControlIndicateModel",
     "SpinDownSpeedData",
     "IndoorBikeSimulationParameters",
@@ -47,5 +39,4 @@ __all__ = [
     "TrainingStatusFlags",
     "TrainingStatusModel",
     "RealtimeData",
-    "RealtimeDataT",
 ]

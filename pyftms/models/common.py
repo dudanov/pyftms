@@ -3,11 +3,10 @@
 
 import dataclasses as dc
 import io
-import itertools
 from enum import STRICT, IntEnum, auto
 from typing import Any, Generic, TypeVar, cast, override
 
-from ..serializer import BaseModel, ModelMeta, get_serializer, model_meta
+from ..serializer import BaseModel, ModelMeta, model_meta
 
 
 class StopPauseCode(IntEnum, boundary=STRICT):
@@ -18,9 +17,9 @@ class StopPauseCode(IntEnum, boundary=STRICT):
     """
 
     STOP = auto()
-    """Stop"""
+    """Stop."""
     PAUSE = auto()
-    """Pause"""
+    """Pause."""
 
 
 @dc.dataclass(frozen=True)
@@ -28,13 +27,7 @@ class IndoorBikeSimulationParameters(BaseModel):
     """
     Indoor Bike Simulation Parameters
 
-    Described in section `4.16.2.18: Set Indoor Bike Simulation Parameters Procedure`.
-
-    Fields:
-        - `Wind Speed` | Meters Per Second (mps)
-        - `Grade` | Percentage
-        - `Coefficient of Rolling Resistance` | Unitless
-        - `Wind Resistance Coefficient` | Kilogram per Meter (Kg/m)
+    Described in section **4.16.2.18: Set Indoor Bike Simulation Parameters Procedure**.
     """
 
     wind_speed: float = dc.field(
@@ -42,24 +35,44 @@ class IndoorBikeSimulationParameters(BaseModel):
             format="s2.001",
         )
     )
+    """
+    Wind Speed.
+    
+    Units: `meters per second (mps)`.
+    """
 
     grade: float = dc.field(
         metadata=model_meta(
             format="s2.01",
         )
     )
+    """
+    Grade.
+    
+    Units: `%`.
+    """
 
     rolling_resistance: float = dc.field(
         metadata=model_meta(
             format="u1.0001",
         )
     )
+    """
+    Coefficient of Rolling Resistance.
+    
+    Units: `unitless`.
+    """
 
     wind_resistance: float = dc.field(
         metadata=model_meta(
             format="u1.01",
         )
     )
+    """
+    Wind Resistance Coefficient.
+    
+    Units: `kilogram per meter (kg/m)`.
+    """
 
 
 T = TypeVar("T", bound=int)
@@ -79,17 +92,18 @@ class CodeSwitchModel(Generic[T], BaseModel):
 
     @override
     @classmethod
-    def _deserialize_dict(cls, src: io.IOBase) -> dict[str, Any]:
-        code, kwargs = cast(int, get_serializer("u1").deserialize(src)), {}
+    def _deserialize_asdict(cls, src: io.IOBase) -> dict[str, Any]:
+        kwargs, it = {}, cls._iter_fields_serializers()
+        code = cast(int, next(it)[1].deserialize(src))
         kwargs["code"] = code
 
-        for k, s in itertools.islice(cls._iter_fields_serializers(), 1, None):
-            meta = cast(ModelMeta, k.metadata)
+        for field, serializer in it:
+            meta = cast(ModelMeta, field.metadata)
 
-            if meta["code"] != code:
+            if meta.get("code") != code:
                 continue
 
-            name, value = k.name, s.deserialize(src)
+            name, value = field.name, serializer.deserialize(src)
 
             # remove digit suffix of 'target_time_x' property
             if name[-1].isdecimal():

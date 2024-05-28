@@ -10,7 +10,11 @@ from ..properties import MachineType
 
 
 class IndoorBike(FitnessMachine):
-    """Indoor Bike (Spin Bike)"""
+    """
+    Indoor Bike (Spin Bike).
+
+    Specific class of `FitnessMachine`.
+    """
 
     _machine_type: ClassVar[MachineType] = MachineType.INDOOR_BIKE
 

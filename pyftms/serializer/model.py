@@ -8,6 +8,7 @@ from typing import (
     Any,
     ClassVar,
     Generic,
+    Iterator,
     Optional,
     Self,
     TypedDict,
@@ -25,11 +26,11 @@ from .num import NumSerializer
 from .serializer import Serializer
 
 
-class ModelMeta(TypedDict):
+class ModelMeta(TypedDict, total=False):
     format: str
-    features_bit: int | None
-    code: int | None
-    num: int | None
+    features_bit: int
+    code: int
+    num: int
 
 
 def model_meta(
@@ -38,104 +39,110 @@ def model_meta(
     features_bit: int | None = None,
     code: int | None = None,
     num: int | None = None,
-):
-    return ModelMeta(
-        format=format,
-        features_bit=features_bit,
-        code=code,
-        num=num,
-    )
+) -> ModelMeta:
+    result = ModelMeta(format=format)
+
+    if features_bit is not None:
+        result["features_bit"] = features_bit
+
+    if code is not None:
+        result["code"] = code
+
+    if num is not None:
+        result["num"] = num
+
+    return result
+
+
+def _get_model_field_serializer(field: dc.Field):
+    meta, type_ = cast(ModelMeta, field.metadata), field.type
+
+    if get_origin(type_) in (Optional, Union, UnionType):
+        if (type_ := get_args(type_)[0]) is None:
+            raise TypeError("Failed to get first type.")
+
+    if isinstance(type_, TypeVar):
+        if (type_ := type_.__bound__) is None:
+            raise TypeError("'TypeVar' must have bound type.")
+
+    def _get_serializer(type_) -> Serializer:
+        if issubclass(type_, (int, float)):
+            if fmt := meta.get("format"):
+                return get_serializer(fmt)
+
+            raise TypeError(f"Format string for field '{field.name}' is required.")
+
+        if issubclass(type_, BaseModel):
+            return get_serializer(type_)
+
+        if isinstance(type_, GenericAlias):
+            if (num := meta.get("num")) is None:
+                raise TypeError("Number of elements is required.")
+
+            serializer = _get_serializer(get_args(type_)[0])
+
+            return ListSerializer(serializer, num)
+
+        raise TypeError("Unsupported type.")
+
+    return _get_serializer(type_)
+
+
+def _get_model_serializers(cls: type["BaseModel"]) -> MappingProxyType[str, Serializer]:
+    """Generate tuples of Fields and its Serializers."""
+    if (serializers_ := getattr(cls, "_model_serializers", None)) is None:
+        result: dict[str, Serializer] = {}
+
+        for field in dc.fields(cls):
+            if field.metadata:
+                result[field.name] = _get_model_field_serializer(field)
+
+        setattr(cls, "_model_serializers", serializers_ := MappingProxyType(result))
+
+    return serializers_
 
 
 @dc.dataclass(frozen=True)
 class BaseModel:
-    _serializers: ClassVar[MappingProxyType[str, Serializer]]
-
-    @staticmethod
-    def _get_field_serializer(field: dc.Field):
-        meta, tp = cast(ModelMeta, field.metadata), field.type
-
-        if get_origin(tp) in (Optional, Union, UnionType):
-            if (tp := get_args(tp)[0]) is None:
-                raise TypeError("Failed to get first type.")
-
-        if isinstance(tp, TypeVar):
-            if (tp := tp.__bound__) is None:
-                raise TypeError("TypeVar must have bound type.")
-
-        def _fun(tp):
-            if issubclass(tp, (int, float)):
-                if fmt := meta.get("format"):
-                    return get_serializer(fmt)
-
-                raise TypeError(f"Format string for field '{field.name}' is required.")
-
-            if issubclass(tp, BaseModel):
-                return get_serializer(tp)
-
-            if isinstance(tp, GenericAlias):
-                if (num := meta.get("num")) is None:
-                    raise TypeError("Number of elements is required.")
-
-                serializer = _fun(get_args(tp)[0])
-
-                return ListSerializer(serializer, num)
-
-            raise TypeError("Unsupported type.")
-
-        return _fun(tp)
+    _model_serializers: ClassVar[MappingProxyType[str, Serializer]]
 
     @classmethod
-    def _get_fields_serializers(cls) -> MappingProxyType[str, Serializer]:
+    def _iter_fields_serializers(cls) -> Iterator[tuple[dc.Field, Serializer]]:
         """Generate tuples of Fields and its Serializers."""
-        if (s := getattr(cls, "_serializers", None)) is None:
-            lst: dict[str, Serializer] = {}
-
-            for field in dc.fields(cls):
-                if field.metadata:
-                    lst[field.name] = cls._get_field_serializer(field)
-
-            setattr(cls, "_serializers", s := MappingProxyType(lst))
-
-        return s
-
-    @classmethod
-    def _iter_fields_serializers(cls):
-        """Generate tuples of Fields and its Serializers."""
-        serializers = cls._get_fields_serializers()
+        serializers = _get_model_serializers(cls)
 
         for field in dc.fields(cls):
-            if (s := serializers.get(field.name)) is not None:
-                yield field, s
+            if (serializer := serializers.get(field.name)) is not None:
+                yield field, serializer
 
     @classmethod
-    def _deserialize_dict(cls, src: io.IOBase) -> dict[str, Any]:
+    def _deserialize_asdict(cls, src: io.IOBase) -> dict[str, Any]:
         kwargs = {}
 
-        for k, s in cls._iter_fields_serializers():
-            val, tp = s._deserialize(src), k.type
+        for field, serializer in cls._iter_fields_serializers():
+            value, type_ = serializer._deserialize(src), field.type
 
-            if get_origin(tp) in (Optional, Union, UnionType):
-                if (tp := get_args(tp)[0]) is None:
+            if get_origin(type_) in (Optional, Union, UnionType):
+                if (type_ := get_args(type_)[0]) is None:
                     raise TypeError("Failed to get first type.")
 
-            if isinstance(s, (NumSerializer, ListSerializer)):
-                val = tp(val)
+            if isinstance(serializer, (NumSerializer, ListSerializer)):
+                value = type_(value)
 
-            kwargs[k.name] = val
+            kwargs[field.name] = value
 
         return kwargs
 
     @classmethod
     def _deserialize(cls, src: io.IOBase) -> Self:
-        return cls(**cls._deserialize_dict(src))
+        return cls(**cls._deserialize_asdict(src))
 
     def _serialize(self, dst: io.IOBase) -> int:
         written = 0
 
-        for k, s in self._iter_fields_serializers():
-            if (val := getattr(self, k.name)) is not None:
-                written += s.serialize(dst, val)
+        for field, serializer in self._iter_fields_serializers():
+            if (val := getattr(self, field.name)) is not None:
+                written += serializer.serialize(dst, val)
 
         return written
 

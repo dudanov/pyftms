@@ -48,6 +48,13 @@ class MachineType(Flag):
 
 
 class NotFitnessMachineError(Exception):
+    """
+    An exception if the FTMS service is not supported by the Bluetooth device.
+
+    May be raised in `get_machine_type_from_service_data` and `get_client`
+    functions if advertisement data was passed as an argument.
+    """
+
     def __init__(self, adv_data: bytes | None) -> None:
         msg = "No service data"
 
@@ -57,9 +64,18 @@ class NotFitnessMachineError(Exception):
         super().__init__(f"Device is not Fitness Machine. {msg}.")
 
 
-def get_machine_type_from_service_data(adv: AdvertisementData) -> MachineType:
-    """Returns Fitness Machine Type from service AD data."""
-    data = adv.service_data.get(FITNESS_MACHINE_SERVICE_UUID)
+def get_machine_type_from_service_data(adv_data: AdvertisementData) -> MachineType:
+    """
+    Returns `MachineType` from service advertisement data.
+
+    Parameters:
+    - `adv_data` - Service [advertisement data](https://bleak.readthedocs.io/en/latest/backends/index.html#bleak.backends.scanner.AdvertisementData).
+
+    Return:
+    - `MachineType` - type of fitness machine.
+    """
+
+    data = adv_data.service_data.get(FITNESS_MACHINE_SERVICE_UUID)
 
     if data is None or len(data) != 3:
         raise NotFitnessMachineError(data)

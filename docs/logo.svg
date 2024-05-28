@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   data-v-fde0c5aa=""
+   viewBox="0 0 310 100"
+   class="iconLeft"
+   version="1.1"
+   id="svg3"
+   sodipodi:docname="07.svg"
+   width="310"
+   height="100"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="3.9366667"
+     inkscape:cx="150"
+     inkscape:cy="129.67824"
+     inkscape:window-width="3440"
+     inkscape:window-height="1377"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="31a69a87-7c17-40ba-a360-8e6e91609f0f" />
+  <!---->
+  <defs
+     data-v-fde0c5aa=""
+     id="defs1">
+    <!---->
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#68c6d0d0-fe89-4efe-8ca2-e54a00207bb6"
+       id="linearGradient3"
+       gradientTransform="scale(0.80116109,1.2481884)"
+       x1="13.631466"
+       y1="2.4555588"
+       x2="48.779205"
+       y2="2.4555588"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#68c6d0d0-fe89-4efe-8ca2-e54a00207bb6"
+       id="linearGradient4"
+       gradientTransform="scale(0.80116109,1.2481884)"
+       x1="13.631466"
+       y1="2.4555588"
+       x2="48.779205"
+       y2="2.4555588"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <defs
+     data-v-fde0c5aa=""
+     id="defs2">
+    <!---->
+  </defs>
+  <g
+     data-v-fde0c5aa=""
+     id="31a69a87-7c17-40ba-a360-8e6e91609f0f"
+     fill="#000000"
+     transform="matrix(4.8863286,0,0,4.8863286,69.156421,22.121818)">
+    <text
+       xml:space="preserve"
+       style="font-size:10.9148px;fill:#000000;stroke-width:0.204653"
+       x="1.3901588"
+       y="9.612978"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.9148px;font-family:Tahoma;-inkscape-font-specification:'Tahoma Bold';stroke-width:0.204653"
+         x="1.3901588"
+         y="9.612978">PyFTMS</tspan></text>
+  </g>
+  <defs
+     data-v-fde0c5aa=""
+     id="defs3">
+    <linearGradient
+       data-v-fde0c5aa=""
+       gradientTransform="rotate(25)"
+       id="68c6d0d0-fe89-4efe-8ca2-e54a00207bb6"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="0">
+      <stop
+         data-v-fde0c5aa=""
+         offset="0%"
+         stop-color="#0076DD"
+         stop-opacity="1"
+         id="stop2" />
+      <stop
+         data-v-fde0c5aa=""
+         offset="100%"
+         stop-color="#00CDE9"
+         stop-opacity="1"
+         id="stop3" />
+    </linearGradient>
+  </defs>
+  <g
+     data-v-fde0c5aa=""
+     id="50e572e1-5182-436c-98c8-97f5a187a2e3"
+     stroke="none"
+     fill="url(#68c6d0d0-fe89-4efe-8ca2-e54a00207bb6)"
+     transform="matrix(1.6473022,0,0,1.6473022,-1.13837,8.985968)"
+     style="fill:url(#linearGradient4)">
+    <path
+       clip-rule="evenodd"
+       d="m 11.02,17.639 3.357,-3.902 7.509,6.42 0.299,-17.092 16.895,12.351 -11.363,9.731 10.822,8.992 -16.257,12.797 -0.149,-16.947 -7.212,6.127 -4,-2.916 8.991,-8.052 z m 20.156,16.843 -3.558,-2.863 0.247,5.631 z m 0,-18.869 -3.558,-2.915 0.247,5.681 z"
+       id="path3"
+       style="fill:url(#linearGradient3)" />
+  </g>
+  <!---->
+</svg>

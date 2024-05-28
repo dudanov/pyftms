@@ -31,9 +31,9 @@ SupportedValueTypes = float | int
 
 class MovementDirection(IntEnum, boundary=STRICT):
     """
-    Code of `Stop or Pause` control and status messages.
+    Movement direction. Used by `CrossTrainer` machine only.
 
-    Described in section `4.16.2.9: Stop or Pause Procedure`.
+    Described in section **4.5.1.1 Flags Field**.
     """
 
     FORWARD = auto()
@@ -129,11 +129,14 @@ class MachineSettings(IntFlag, boundary=STRICT):
 
 
 class SettingRange(NamedTuple):
-    """Value range of settings parameter"""
+    """Value range of settings parameter."""
 
-    native_min_value: SupportedValueTypes
-    native_max_value: SupportedValueTypes
-    native_step: SupportedValueTypes
+    min_value: SupportedValueTypes
+    """Minimum value. Inclusive."""
+    max_value: SupportedValueTypes
+    """Maximum value. Inclusive."""
+    step: SupportedValueTypes
+    """Step value."""
 
 
 async def read_features(cli: BleakClient) -> tuple[MachineFeatures, MachineSettings]:

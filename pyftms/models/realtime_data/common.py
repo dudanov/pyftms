@@ -14,7 +14,7 @@ class RealtimeData(BaseModel):
 
     @override
     @classmethod
-    def _deserialize_dict(cls, src: io.IOBase) -> dict[str, Any]:
+    def _deserialize_asdict(cls, src: io.IOBase) -> dict[str, Any]:
         mask, kwargs = cast(int, get_serializer("u2").deserialize(src)), {}
         kwargs["mask"] = mask
         mask ^= 1
