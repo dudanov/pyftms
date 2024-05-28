@@ -73,9 +73,9 @@ class FitnessMachine(ABC, PropertiesManager):
         ble_device: BLEDevice,
         *,
         timeout: float = 2.0,
-        on_event_callback: FtmsCallback | None = None,
+        on_ftms_event: FtmsCallback | None = None,
     ) -> None:
-        super().__init__(on_event_callback)
+        super().__init__(on_ftms_event)
 
         self._device = ble_device
         self._timeout = timeout

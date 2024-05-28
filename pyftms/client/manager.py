@@ -30,8 +30,8 @@ class PropertiesManager:
     _training_status: TrainingStatusCode
     """Last Training Status Code"""
 
-    def __init__(self, on_event_callback: FtmsCallback | None = None) -> None:
-        self._cb = on_event_callback
+    def __init__(self, on_ftms_event: FtmsCallback | None = None) -> None:
+        self._cb = on_ftms_event
         self._properties = {}
         self._settings = {}
 

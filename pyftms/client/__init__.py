@@ -38,7 +38,7 @@ def get_client(
     adv_or_type: AdvertisementData | MachineType,
     *,
     timeout: float = 2.0,
-    on_event_callback: FtmsCallback | None = None,
+    on_ftms_event: FtmsCallback | None = None,
 ) -> FitnessMachine:
     """
     Creates an `FitnessMachine` instance from [Bleak](https://bleak.readthedocs.io/) discovered
@@ -48,7 +48,7 @@ def get_client(
     - `ble_device` - [BLE device](https://bleak.readthedocs.io/en/latest/api/index.html#bleak.backends.device.BLEDevice).
     - `adv_or_type` - Service [advertisement data](https://bleak.readthedocs.io/en/latest/backends/index.html#bleak.backends.scanner.AdvertisementData) or `MachineType`.
     - `timeout` - Control operation timeout. Defaults to 2.0s.
-    - `on_event_callback` - Callback for receiving fitness machine events.
+    - `on_ftms_event` - Callback for receiving fitness machine events.
 
     Return:
     - `FitnessMachine` instance.
@@ -59,7 +59,7 @@ def get_client(
 
     cls = get_machine(adv_or_type)
 
-    return cls(ble_device, on_event_callback=on_event_callback, timeout=timeout)
+    return cls(ble_device, on_ftms_event=on_ftms_event, timeout=timeout)
 
 
 async def get_client_from_address(
@@ -67,7 +67,7 @@ async def get_client_from_address(
     *,
     scan_timeout: float = 10.0,
     timeout: float = 2.0,
-    on_event_callback: FtmsCallback | None = None,
+    on_ftms_event: FtmsCallback | None = None,
 ) -> FitnessMachine:
     """
     Scans for fitness machine with specified BLE address. On success creates and return an `FitnessMachine` instance.
@@ -76,7 +76,7 @@ async def get_client_from_address(
     - `address` - The Bluetooth address of the device on this machine (UUID on macOS).
     - `scan_timeout` - Scanning timeout. Defaults to 10.0s.
     - `timeout` - Control operation timeout. Defaults to 2.0s.
-    - `on_event_callback` - Callback for receiving fitness machine events.
+    - `on_ftms_event` - Callback for receiving fitness machine events.
 
     Return:
     - `FitnessMachine` instance.
@@ -95,7 +95,7 @@ async def get_client_from_address(
     try:
         dev, adv = await asyncio.wait_for(future, scan_timeout)
         return get_client(
-            dev, adv, on_event_callback=on_event_callback, timeout=timeout
+            dev, adv, on_ftms_event=on_ftms_event, timeout=timeout
         )
     finally:
         await scanner.stop()

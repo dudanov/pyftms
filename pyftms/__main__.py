@@ -19,7 +19,7 @@ def on_event(event: FtmsEvents):
 
 
 async def run():
-    async with await get_client_from_address(ADDRESS, on_event_callback=on_event) as c:
+    async with await get_client_from_address(ADDRESS, on_ftms_event=on_event) as c:
         properties = c.properties
         settings = c.settings
 
