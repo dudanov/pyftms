@@ -94,9 +94,7 @@ async def get_client_from_address(
 
     try:
         dev, adv = await asyncio.wait_for(future, scan_timeout)
-        return get_client(
-            dev, adv, on_ftms_event=on_ftms_event, timeout=timeout
-        )
+        return get_client(dev, adv, on_ftms_event=on_ftms_event, timeout=timeout)
     finally:
         await scanner.stop()
 
