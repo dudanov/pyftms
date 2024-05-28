@@ -43,13 +43,13 @@ class SetupEventData(TypedDict, total=False):
     """
     Targeted distance.
 
-    Units: `meters`.
+    Units: `m`.
     """
     target_energy: int
     """
     Targeted expended energy.
 
-    Units: `kcals`.
+    Units: `kcal`.
     """
     target_heart_rate: int
     """
@@ -67,7 +67,7 @@ class SetupEventData(TypedDict, total=False):
     """
     Targeted power.
 
-    Units: `Watts`.
+    Units: `Watt`.
     """
     target_resistance: float | int
     """
@@ -85,19 +85,19 @@ class SetupEventData(TypedDict, total=False):
     """
     Targeted number of steps.
 
-    Units: `steps`.
+    Units: `step`.
     """
     target_strides: int
     """
     Targeted number of strides.
 
-    Units: `strides`.
+    Units: `stride`.
     """
     target_time: tuple[int, ...]
     """
     Targeted training time.
 
-    Units: `seconds`.
+    Units: `s`.
     """
     wheel_circumference: float
     """
@@ -190,37 +190,37 @@ class UpdateEventData(TypedDict, total=False):
     """
     Average Pace.
 
-    Units: `Km/m` or `Seconds(500m)` for `Rower`.
+    Units: `km/m` or `seconds(500m)` for `Rower`.
     """
     pace_instant: int | float
     """
     Instantaneous Pace.
 
-    Units: `Km/m` or `Seconds(500m)` for `Rower`.
+    Units: `km/m` or `seconds(500m)` for `Rower`.
     """
     power_average: int
     """
     Average Power.
 
-    Units: `Watts`.
+    Units: `Watt`.
     """
     power_instant: int
     """
     Instantaneous Power.
 
-    Units: `Watts`.
+    Units: `Watt`.
     """
     power_output: int
     """
     Power Output.
 
-    Units: `Watts`.
+    Units: `Watt`.
     """
     ramp_angle: float
     """
     Ramp Angle Setting.
 
-    Units: `deg`.
+    Units: `degree`.
     """
     resistance_level: int | float
     """
@@ -232,25 +232,25 @@ class UpdateEventData(TypedDict, total=False):
     """
     Average Speed.
 
-    Units: `Km/h`.
+    Units: `km/h`.
     """
     speed_instant: float
     """
     Instantaneous Speed.
 
-    Units: `Km/h`.
+    Units: `km/h`.
     """
     step_rate_average: int
     """
     Average Step Rate.
 
-    Units: `step_per_minute`.
+    Units: `step/m`.
     """
     step_rate_instant: int
     """
     Instantaneous Step Rate.
 
-    Units: `step_per_minute`.
+    Units: `step/m`.
     """
     stride_count: int
     """

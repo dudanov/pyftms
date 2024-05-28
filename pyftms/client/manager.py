@@ -190,7 +190,7 @@ class PropertiesManager:
         """
         Average Pace.
 
-        Units: `Km/m` or `Seconds(500m)` for `Rower`.
+        Units: `km/m` or `seconds(500m)` for `Rower`.
         """
         return self._get_property(c.PACE_AVERAGE)
 
@@ -199,7 +199,7 @@ class PropertiesManager:
         """
         Instantaneous Pace.
 
-        Units: `Km/m` or `Seconds(500m)` for `Rower`.
+        Units: `km/m` or `seconds(500m)` for `Rower`.
         """
         return self._get_property(c.PACE_INSTANT)
 
@@ -208,7 +208,7 @@ class PropertiesManager:
         """
         Average Power.
 
-        Units: `Watts`.
+        Units: `Watt`.
         """
         return self._get_property(c.POWER_AVERAGE)
 
@@ -217,7 +217,7 @@ class PropertiesManager:
         """
         Instantaneous Power.
 
-        Units: `Watts`.
+        Units: `Watt`.
         """
         return self._get_property(c.POWER_INSTANT)
 
@@ -226,7 +226,7 @@ class PropertiesManager:
         """
         Power Output.
 
-        Units: `Watts`.
+        Units: `Watt`.
         """
         return self._get_property(c.POWER_OUTPUT)
 
@@ -235,7 +235,7 @@ class PropertiesManager:
         """
         Ramp Angle Setting.
 
-        Units: `deg`.
+        Units: `degree`.
         """
         return self._get_property(c.RAMP_ANGLE)
 
@@ -253,7 +253,7 @@ class PropertiesManager:
         """
         Average Speed.
 
-        Units: `Km/h`.
+        Units: `km/h`.
         """
         return self._get_property(c.SPEED_AVERAGE)
 
@@ -262,7 +262,7 @@ class PropertiesManager:
         """
         Instantaneous Speed.
 
-        Units: `Km/h`.
+        Units: `km/h`.
         """
         return self._get_property(c.SPEED_INSTANT)
 
@@ -271,7 +271,7 @@ class PropertiesManager:
         """
         Average Step Rate.
 
-        Units: `step_per_minute`.
+        Units: `step/m`.
         """
         return self._get_property(c.STEP_RATE_AVERAGE)
 
@@ -280,7 +280,7 @@ class PropertiesManager:
         """
         Instantaneous Step Rate.
 
-        Units: `step_per_minute`.
+        Units: `step/m`.
         """
         return self._get_property(c.STEP_RATE_INSTANT)
 
@@ -359,7 +359,7 @@ class PropertiesManager:
         """
         Targeted distance.
 
-        Units: `meters`.
+        Units: `m`.
         """
         return self._get_property(c.TARGET_DISTANCE)
 
@@ -395,7 +395,7 @@ class PropertiesManager:
         """
         Targeted power.
 
-        Units: `Watts`.
+        Units: `Watt`.
         """
         return self._get_property(c.TARGET_POWER)
 
@@ -422,7 +422,7 @@ class PropertiesManager:
         """
         Targeted number of steps.
 
-        Units: `steps`.
+        Units: `step`.
         """
         return self._get_property(c.TARGET_STEPS)
 
@@ -431,7 +431,7 @@ class PropertiesManager:
         """
         Targeted number of strides.
 
-        Units: `strides`.
+        Units: `stride`.
         """
         return self._get_property(c.TARGET_STRIDES)
 
@@ -440,7 +440,7 @@ class PropertiesManager:
         """
         Targeted training time.
 
-        Units: `seconds`.
+        Units: `s`.
         """
         return self._get_property(c.TARGET_TIME)
 

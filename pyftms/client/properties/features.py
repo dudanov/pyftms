@@ -37,9 +37,9 @@ class MovementDirection(IntEnum, boundary=STRICT):
     """
 
     FORWARD = auto()
-    """Forward"""
+    """Move Forward."""
     BACKWARD = auto()
-    """Backward"""
+    """Move Backward."""
 
 
 class MachineFeatures(IntFlag, boundary=STRICT):

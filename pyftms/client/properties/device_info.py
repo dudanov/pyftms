@@ -21,11 +21,18 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class DeviceInfo(TypedDict, total=False):
+    """Device Information."""
+
     manufacturer: str
+    """Manufacturer."""
     model: str
+    """Model."""
     serial_number: str
+    """Serial Number."""
     sw_version: str
+    """Software Version."""
     hw_version: str
+    """Hardware Version."""
 
 
 async def read_device_info(cli: BleakClient) -> DeviceInfo:
