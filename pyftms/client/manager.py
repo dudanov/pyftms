@@ -52,6 +52,9 @@ class PropertiesManager:
     def _get_property(self, name: str) -> Any:
         return self._properties.get(name)
 
+    def _get_setting(self, name: str) -> Any:
+        return self._settings.get(name)
+
     @property
     def properties(self) -> UpdateEventData:
         """Read-only updateable properties mapping."""
@@ -343,7 +346,7 @@ class PropertiesManager:
     @property
     def indoor_bike_simulation(self) -> IndoorBikeSimulationParameters:
         """Indoor Bike Simulation Parameters."""
-        return self._get_property(c.INDOOR_BIKE_SIMULATION)
+        return self._get_setting(c.INDOOR_BIKE_SIMULATION)
 
     @property
     def target_cadence(self) -> float:
@@ -352,7 +355,7 @@ class PropertiesManager:
 
         Units: `rpm`.
         """
-        return self._get_property(c.TARGET_CADENCE)
+        return self._get_setting(c.TARGET_CADENCE)
 
     @property
     def target_distance(self) -> int:
@@ -361,16 +364,16 @@ class PropertiesManager:
 
         Units: `m`.
         """
-        return self._get_property(c.TARGET_DISTANCE)
+        return self._get_setting(c.TARGET_DISTANCE)
 
     @property
     def target_energy(self) -> int:
         """
         Targeted expended energy.
 
-        Units: `kcals`.
+        Units: `kcal`.
         """
-        return self._get_property(c.TARGET_ENERGY)
+        return self._get_setting(c.TARGET_ENERGY)
 
     @property
     def target_heart_rate(self) -> int:
@@ -379,7 +382,7 @@ class PropertiesManager:
 
         Units: `bpm`.
         """
-        return self._get_property(c.TARGET_HEART_RATE)
+        return self._get_setting(c.TARGET_HEART_RATE)
 
     @property
     def target_inclination(self) -> float:
@@ -388,7 +391,7 @@ class PropertiesManager:
 
         Units: `%`.
         """
-        return self._get_property(c.TARGET_INCLINATION)
+        return self._get_setting(c.TARGET_INCLINATION)
 
     @property
     def target_power(self) -> int:
@@ -397,7 +400,7 @@ class PropertiesManager:
 
         Units: `Watt`.
         """
-        return self._get_property(c.TARGET_POWER)
+        return self._get_setting(c.TARGET_POWER)
 
     @property
     def target_resistance(self) -> float:
@@ -406,7 +409,7 @@ class PropertiesManager:
 
         Units: `unitless`.
         """
-        return self._get_property(c.TARGET_RESISTANCE)
+        return self._get_setting(c.TARGET_RESISTANCE)
 
     @property
     def target_speed(self) -> float:
@@ -415,7 +418,7 @@ class PropertiesManager:
 
         Units: `km/h`.
         """
-        return self._get_property(c.TARGET_SPEED)
+        return self._get_setting(c.TARGET_SPEED)
 
     @property
     def target_steps(self) -> int:
@@ -424,7 +427,7 @@ class PropertiesManager:
 
         Units: `step`.
         """
-        return self._get_property(c.TARGET_STEPS)
+        return self._get_setting(c.TARGET_STEPS)
 
     @property
     def target_strides(self) -> int:
@@ -433,7 +436,7 @@ class PropertiesManager:
 
         Units: `stride`.
         """
-        return self._get_property(c.TARGET_STRIDES)
+        return self._get_setting(c.TARGET_STRIDES)
 
     @property
     def target_time(self) -> tuple[int, ...]:
@@ -442,7 +445,7 @@ class PropertiesManager:
 
         Units: `s`.
         """
-        return self._get_property(c.TARGET_TIME)
+        return self._get_setting(c.TARGET_TIME)
 
     @property
     def wheel_circumference(self) -> float:
@@ -451,4 +454,4 @@ class PropertiesManager:
 
         Units: `mm`.
         """
-        return self._get_property(c.WHEEL_CIRCUMFERENCE)
+        return self._get_setting(c.WHEEL_CIRCUMFERENCE)
