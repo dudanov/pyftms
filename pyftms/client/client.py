@@ -288,7 +288,7 @@ class FitnessMachine(ABC, PropertiesManager):
         """
         Sets target power.
 
-        Units: `Watts`.
+        Units: `Watt`.
         """
         return await self.set_setting("target_power", value)
 
@@ -304,7 +304,7 @@ class FitnessMachine(ABC, PropertiesManager):
         """
         Sets target expended energy.
 
-        Units: `kcals`.
+        Units: `kcal`.
         """
         return await self.set_setting("target_energy", value)
 
@@ -312,7 +312,7 @@ class FitnessMachine(ABC, PropertiesManager):
         """
         Sets targeted number of steps.
 
-        Units: `steps`.
+        Units: `step`.
         """
         return await self.set_setting("target_steps", value)
 
@@ -320,7 +320,7 @@ class FitnessMachine(ABC, PropertiesManager):
         """
         Sets targeted number of strides.
 
-        Units: `strides`.
+        Units: `stride`.
         """
         return await self.set_setting("target_strides", value)
 
@@ -328,7 +328,7 @@ class FitnessMachine(ABC, PropertiesManager):
         """
         Sets targeted distance.
 
-        Units: `meters`.
+        Units: `m`.
         """
         return await self.set_setting("target_distance", value)
 
@@ -336,7 +336,7 @@ class FitnessMachine(ABC, PropertiesManager):
         """
         Set targeted training time.
 
-        Units: `seconds`.
+        Units: `s`.
         """
         return await self.set_setting("target_time", *value)
 
