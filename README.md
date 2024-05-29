@@ -22,4 +22,4 @@ pip install pyftms
 
 ## Usage
 
-How to use please read API [documentation](https://dudanov.github.io/pyftms/pyftms.html).
+Please read API [documentation](https://dudanov.github.io/pyftms/pyftms.html).
