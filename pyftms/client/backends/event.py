@@ -303,7 +303,7 @@ class TrainingStatusEvent(NamedTuple):
     """Training Status Event."""
 
     event_id: Literal["training_status"]
-    """Event ID: always `training_status`."""
+    """Always `training_status`."""
     event_data: TrainingStatusEventData
     """`TrainingStatusEvent` data."""
 
@@ -312,7 +312,7 @@ class UpdateEvent(NamedTuple):
     """Update Event."""
 
     event_id: Literal["update"]
-    """Event ID: always `update`."""
+    """Always `update`."""
     event_data: UpdateEventData
     """`UpdateEvent` data."""
 
@@ -321,7 +321,7 @@ class SpinDownEvent(NamedTuple):
     """Spin Down Procedure Event."""
 
     event_id: Literal["spin_down"]
-    """Event ID: always `spin_down`."""
+    """Always `spin_down`."""
     event_data: SpinDownEventData
     """`SpinDownEvent` data."""
 
@@ -330,7 +330,7 @@ class SetupEvent(NamedTuple):
     """Setting Event."""
 
     event_id: Literal["setup"]
-    """Event ID: always `setup`."""
+    """Always `setup`."""
     event_data: SetupEventData
     """`SetupEvent` data."""
     event_source: ControlSource
@@ -341,7 +341,7 @@ class ControlEvent(NamedTuple):
     """Control Event."""
 
     event_id: ControlEvents
-    """Simple Event ID."""
+    """One of: `start`, `stop`, `pause`, `reset`."""
     event_source: ControlSource
     """Reason of event."""
 
