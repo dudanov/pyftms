@@ -24,6 +24,7 @@ from ..models import (
     SpinDownControlCode,
     StopPauseCode,
 )
+from . import const as c
 from .backends import DataUpdater, FtmsCallback, MachineController
 from .manager import PropertiesManager
 from .properties import (
@@ -266,7 +267,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `km/h`.
         """
-        return await self.set_setting("target_speed", value)
+        return await self.set_setting(c.TARGET_SPEED, value)
 
     async def set_target_inclination(self, value: float) -> ResultCode:
         """
@@ -274,7 +275,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `%`.
         """
-        return await self.set_setting("target_inclination", value)
+        return await self.set_setting(c.TARGET_INCLINATION, value)
 
     async def set_target_resistance(self, value: float) -> ResultCode:
         """
@@ -282,7 +283,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `unitless`.
         """
-        return await self.set_setting("target_resistance", value)
+        return await self.set_setting(c.TARGET_RESISTANCE, value)
 
     async def set_target_power(self, value: int) -> ResultCode:
         """
@@ -290,7 +291,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `Watt`.
         """
-        return await self.set_setting("target_power", value)
+        return await self.set_setting(c.TARGET_POWER, value)
 
     async def set_target_heart_rate(self, value: int) -> ResultCode:
         """
@@ -298,7 +299,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `bpm`.
         """
-        return await self.set_setting("target_heart_rate", value)
+        return await self.set_setting(c.TARGET_HEART_RATE, value)
 
     async def set_target_energy(self, value: int) -> ResultCode:
         """
@@ -306,7 +307,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `kcal`.
         """
-        return await self.set_setting("target_energy", value)
+        return await self.set_setting(c.TARGET_ENERGY, value)
 
     async def set_target_steps(self, value: int) -> ResultCode:
         """
@@ -314,7 +315,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `step`.
         """
-        return await self.set_setting("target_steps", value)
+        return await self.set_setting(c.TARGET_STEPS, value)
 
     async def set_target_strides(self, value: int) -> ResultCode:
         """
@@ -322,7 +323,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `stride`.
         """
-        return await self.set_setting("target_strides", value)
+        return await self.set_setting(c.TARGET_STRIDES, value)
 
     async def set_target_distance(self, value: int) -> ResultCode:
         """
@@ -330,7 +331,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `m`.
         """
-        return await self.set_setting("target_distance", value)
+        return await self.set_setting(c.TARGET_DISTANCE, value)
 
     async def set_target_time(self, *value: int) -> ResultCode:
         """
@@ -338,14 +339,14 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `s`.
         """
-        return await self.set_setting("target_time", *value)
+        return await self.set_setting(c.TARGET_TIME, *value)
 
-    async def set_bike_simulation_params(
+    async def set_indoor_bike_simulation(
         self,
         value: IndoorBikeSimulationParameters,
     ) -> ResultCode:
         """Set indoor bike simulation parameters."""
-        return await self.set_setting("indoor_bike_simulation", value)
+        return await self.set_setting(c.INDOOR_BIKE_SIMULATION, value)
 
     async def set_wheel_circumference(self, value: float) -> ResultCode:
         """
@@ -353,7 +354,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `mm`.
         """
-        return await self.set_setting("wheel_circumference", value)
+        return await self.set_setting(c.WHEEL_CIRCUMFERENCE, value)
 
     async def spin_down_start(self) -> ResultCode:
         """
@@ -361,7 +362,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         It can be sent either in response to a request to start Spin-Down, or separately.
         """
-        return await self.set_setting("spin_down_control", SpinDownControlCode.START)
+        return await self.set_setting(c.SPIN_DOWN, SpinDownControlCode.START)
 
     async def spin_down_ignore(self) -> ResultCode:
         """
@@ -369,7 +370,7 @@ class FitnessMachine(ABC, PropertiesManager):
 
         It can be sent in response to a request to start Spin-Down.
         """
-        return await self.set_setting("spin_down_control", SpinDownControlCode.IGNORE)
+        return await self.set_setting(c.SPIN_DOWN, SpinDownControlCode.IGNORE)
 
     async def set_target_cadence(self, value: float) -> ResultCode:
         """
@@ -377,4 +378,4 @@ class FitnessMachine(ABC, PropertiesManager):
 
         Units: `rpm`.
         """
-        return await self.set_setting("target_cadence", value)
+        return await self.set_setting(c.TARGET_CADENCE, value)
