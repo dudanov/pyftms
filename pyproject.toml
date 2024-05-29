@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
-bleak = "0.22.1"
+bleak = ">=0.21.0"
 bleak-retry-connector = "3.5.0"
 
 [tool.poetry.group.docs]
