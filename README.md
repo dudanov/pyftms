@@ -8,13 +8,11 @@
 
 **Step Climber** and **Stair Climber** machines are **not supported** due to incomplete protocol information and low popularity.
 
-!!! **API** !!! not stable and may be unsignifically changed.
-
 ## Requirments
 
-1. python >= 3.11;
-2. bleak >= 0.22;
-3. bleak-retry-connector >= 3.5.0.
+1. `python` >= 3.11;
+2. `bleak` >= 0.22;
+3. `bleak-retry-connector` >= 3.5.0.
 
 ## Install it from PyPI
 
@@ -24,4 +22,4 @@ pip install pyftms
 
 ## Usage
 
-How to use please read the [documentation](https://dudanov.github.io/pyftms/pyftms.html).
+How to use please read API [documentation](https://dudanov.github.io/pyftms/pyftms.html).
