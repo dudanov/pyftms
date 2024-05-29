@@ -11,7 +11,7 @@ class SpinDownStatusCode(IntEnum, boundary=STRICT):
     """
     Spin Down Status.
 
-    Described in section `4.17 Fitness Machine Status. Table 4.27`.
+    Described in section **4.17 Fitness Machine Status. Table 4.27**.
     """
 
     REQUESTED = auto()
@@ -29,16 +29,16 @@ class SpinDownStatusCode(IntEnum, boundary=STRICT):
 
 class SpinDownControlCode(IntEnum, boundary=STRICT):
     """
-    Spin Down Status.
+    Spin Down Control Code.
 
-    Described in section `4.17 Fitness Machine Status. Table 4.27`.
+    Described in section **4.16.2.20 Spin Down Control Procedure. Table 4.21**.
     """
 
     START = auto()
-    """Spin Down Requested"""
+    """Spin Down Start."""
 
     IGNORE = auto()
-    """Success"""
+    """Spin Down Ignore."""
 
 
 @dc.dataclass(frozen=True)
@@ -46,7 +46,7 @@ class SpinDownSpeedData(BaseModel):
     """
     Response Parameter when the Spin Down Procedure succeeds.
 
-    Described in section `4.16.2.20 Spin Down Control Procedure`.
+    Described in section `4.16.2.20 Spin Down Control Procedure. Table 4.22`.
     """
 
     low: float = dc.field(
@@ -54,11 +54,19 @@ class SpinDownSpeedData(BaseModel):
             format="u2.01",
         )
     )
-    """Target Speed Low | km/h"""
+    """
+    Target Speed Low.
+    
+    Units: `km/h`.
+    """
 
     high: float = dc.field(
         metadata=model_meta(
             format="u2.01",
         )
     )
-    """Target Speed High | km/h"""
+    """
+    Target Speed High.
+    
+    Units: `km/h`.
+    """

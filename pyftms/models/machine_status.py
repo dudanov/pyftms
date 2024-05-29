@@ -17,7 +17,7 @@ class MachineStatusCode(IntEnum, boundary=STRICT):
     """
     Fitness Machine Status.
 
-    Described in section `4.16.1: Fitness Machine Control Point Procedure Requirements`.
+    Described in section **4.16.1: Fitness Machine Control Point Procedure Requirements**.
     """
 
     RESET = auto()
@@ -92,7 +92,7 @@ class MachineStatusModel(CodeSwitchModel[MachineStatusCode]):
     """
     Structure of the Fitness Machine Status characteristic.
 
-    Described in section `4.17 Fitness Machine Status`.
+    Described in section **4.17 Fitness Machine Status**.
     """
 
     stop_pause: StopPauseCode | None = dc.field(
