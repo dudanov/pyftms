@@ -14,7 +14,7 @@ from ..properties import MovementDirection
 
 FtmsNumbers = int | float
 ControlSource = Literal["callback", "user", "safety", "other"]
-SimpleControlEvents = Literal["start", "stop", "pause", "reset"]
+ControlEvents = Literal["start", "stop", "pause", "reset"]
 
 
 class SpinDownEventData(TypedDict, total=False):
@@ -294,43 +294,56 @@ class TrainingStatusEventData(TypedDict):
     """`TrainingStatusEvent` data."""
 
     code: TrainingStatusCode
+    """Training Status Code."""
     string: NotRequired[str]
+    """Extended string."""
 
 
 class TrainingStatusEvent(NamedTuple):
     """Training Status Event."""
 
     event_id: Literal["training_status"]
+    """Event ID: always `training_status`."""
     event_data: TrainingStatusEventData
+    """`TrainingStatusEvent` data."""
 
 
 class UpdateEvent(NamedTuple):
     """Update Event."""
 
     event_id: Literal["update"]
+    """Event ID: always `update`."""
     event_data: UpdateEventData
+    """`UpdateEvent` data."""
 
 
 class SpinDownEvent(NamedTuple):
     """Spin Down Procedure Event."""
 
     event_id: Literal["spin_down"]
+    """Event ID: always `spin_down`."""
     event_data: SpinDownEventData
+    """`SpinDownEvent` data."""
 
 
 class SetupEvent(NamedTuple):
     """Setting Event."""
 
     event_id: Literal["setup"]
+    """Event ID: always `setup`."""
     event_data: SetupEventData
+    """`SetupEvent` data."""
     event_source: ControlSource
+    """Reason of event."""
 
 
 class ControlEvent(NamedTuple):
     """Control Event."""
 
-    event_id: SimpleControlEvents
+    event_id: ControlEvents
+    """Simple Event ID."""
     event_source: ControlSource
+    """Reason of event."""
 
 
 FtmsEvents = (

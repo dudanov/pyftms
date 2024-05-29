@@ -28,23 +28,23 @@ class MachineType(Flag):
     """
     Fitness Machine Type.
 
-    Included in the `Service Data AD Type`.
+    Included in the Advertisement Service Data.
 
-    Described in section `3.1.2: Fitness Machine Type Field`.
+    Described in section **3.1.2: Fitness Machine Type Field**.
     """
 
     TREADMILL = auto()
-    """Treadmill Supported"""
+    """Treadmill Machine."""
     CROSS_TRAINER = auto()
-    """Cross Trainer Supported"""
+    """Cross Trainer Machine."""
     STEP_CLIMBER = auto()
-    """Step Climber Supported"""
+    """Step Climber Machine."""
     STAIR_CLIMBER = auto()
-    """Stair Climber Supported"""
+    """Stair Climber Machine."""
     ROWER = auto()
-    """Rower Supported"""
+    """Rower Machine."""
     INDOOR_BIKE = auto()
-    """Indoor Bike Supported"""
+    """Indoor Bike Machine."""
 
 
 class NotFitnessMachineError(Exception):
