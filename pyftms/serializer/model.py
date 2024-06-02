@@ -175,7 +175,7 @@ class BaseModel:
             for field in dc.fields(cls):
                 meta, tp = cast(ModelMeta, field.metadata), field.type
 
-                if not meta:
+                if not meta or field.name == "code":
                     continue
 
                 if get_origin(tp) in (Optional, Union, UnionType):
@@ -191,7 +191,7 @@ class BaseModel:
 
         _get_cls_features(cls)
 
-        return tuple(result[1:])  # skip 'mask' or 'code' field
+        return tuple(result)
 
     def __post_init__(self, *args, **kwargs):
         for field in dc.fields(self):
