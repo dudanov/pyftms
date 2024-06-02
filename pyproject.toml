@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyftms"
-version = "0.2.2"
+version = "0.2.3"
 description = "PyFTMS - Python Fitness Machine Service client library."
 authors = ["Sergey V. DUDANOV <sergey.dudanov@gmail.com>"]
 readme = "README.md"

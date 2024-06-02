@@ -24,6 +24,9 @@ class PropertiesManager:
     _properties: UpdateEventData
     """Properties dictonary"""
 
+    _live_properties: set[str]
+    """Properties dictonary"""
+
     _settings: SetupEventData
     """Properties dictonary"""
 
@@ -33,6 +36,7 @@ class PropertiesManager:
     def __init__(self, on_ftms_event: FtmsCallback | None = None) -> None:
         self._cb = on_ftms_event
         self._properties = {}
+        self._live_properties = set()
         self._settings = {}
 
     def set_callback(self, cb: FtmsCallback):
@@ -42,6 +46,7 @@ class PropertiesManager:
         """Real-time training data update handler."""
         if e.event_id == "update":
             self._properties |= e.event_data
+            self._live_properties.update(k for k, v in e.event_data.items() if v)
         elif e.event_id == "setup":
             self._settings |= e.event_data
         elif e.event_id == "training_status":
@@ -59,6 +64,15 @@ class PropertiesManager:
     def properties(self) -> UpdateEventData:
         """Read-only updateable properties mapping."""
         return cast(UpdateEventData, MappingProxyType(self._properties))
+
+    @property
+    def live_properties(self) -> tuple[str, ...]:
+        """
+        Living properties.
+
+        Properties that had a value other than zero at least once.
+        """
+        return tuple(self._live_properties)
 
     @property
     def settings(self) -> SetupEventData:
