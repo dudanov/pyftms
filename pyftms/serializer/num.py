@@ -7,7 +7,7 @@ from typing import override
 
 from .serializer import Serializer
 
-SupportedNumbers = int | float
+SupportedNumbers = int | float | None
 
 _PARAM_PATTERN = re.compile(r"[us][1-8](\.\d{1,8})?$")
 
@@ -31,6 +31,11 @@ class NumSerializer(Serializer[SupportedNumbers]):
     def __init__(self, format: str) -> None:
         self.size, self.factor, self.sign = _parse_fmt(format)
 
+    def _none(self) -> int:
+        result = 256 * self.size - 1
+
+        return result // 2 if self.sign else result
+
     @override
     def _deserialize(self, src: io.IOBase) -> SupportedNumbers:
         """
@@ -50,7 +55,10 @@ class NumSerializer(Serializer[SupportedNumbers]):
 
         val = int.from_bytes(data, "little", signed=self.sign)
 
-        if self.factor:
+        if val == self._none():
+            return None
+
+        elif self.factor:
             val *= self.factor
 
         return val
@@ -66,10 +74,14 @@ class NumSerializer(Serializer[SupportedNumbers]):
         Returns:
             int - number of written bytes.
         """
-        if self.factor:
+        if value is None:
+            value = self._none()
+
+        elif self.factor:
             value /= self.factor
 
         b = int(value).to_bytes(self.size, "little", signed=self.sign)
+
         return dst.write(b)
 
     @override

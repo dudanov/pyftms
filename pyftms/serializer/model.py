@@ -122,6 +122,9 @@ class BaseModel:
         for field, serializer in cls._iter_fields_serializers():
             value, type_ = serializer._deserialize(src), field.type
 
+            if value is None:
+                continue
+
             if get_origin(type_) in (Optional, Union, UnionType):
                 if (type_ := get_args(type_)[0]) is None:
                     raise TypeError("Failed to get first type.")
