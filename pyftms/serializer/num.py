@@ -32,9 +32,7 @@ class NumSerializer(Serializer[SupportedNumbers]):
         self.size, self.factor, self.sign = _parse_fmt(format)
 
     def _none(self) -> int:
-        result = 256 * self.size - 1
-
-        return result // 2 if self.sign else result
+        return (128 if self.sign else 256) * self.size - 1
 
     @override
     def _deserialize(self, src: io.IOBase) -> SupportedNumbers:
