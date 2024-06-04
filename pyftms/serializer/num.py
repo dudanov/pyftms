@@ -35,7 +35,8 @@ class NumSerializer(Serializer[SupportedNumbers]):
 
     def _none(self) -> int:
         """Calculate FTMS `Data Not Available` value."""
-        return (1 << (8 * self.size - int(self.sign))) - 1
+
+        return (1 << (8 * self.size - self.sign)) - 1
 
     @override
     def _deserialize(self, src: io.IOBase) -> SupportedNumbers:
