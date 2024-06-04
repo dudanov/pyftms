@@ -51,7 +51,7 @@ class FitnessMachine(ABC, PropertiesManager):
     _machine_type: ClassVar[MachineType]
     """Machine type."""
 
-    _data_model: type[RealtimeData]
+    _data_model: ClassVar[type[RealtimeData]]
     """Model of real-time training data."""
 
     _data_uuid: ClassVar[str]
@@ -85,8 +85,9 @@ class FitnessMachine(ABC, PropertiesManager):
         self._data_updater = DataUpdater(self._data_model, self._on_event)
         self._controller = MachineController(self._on_event)
 
-    def _get_supported_properties(self, features: MachineFeatures) -> tuple[str, ...]:
-        return self._data_model._get_features(features)
+    @classmethod
+    def _get_supported_properties(cls, features: MachineFeatures) -> tuple[str, ...]:
+        return cls._data_model._get_features(features)
 
     async def __aenter__(self):
         await self.connect()
@@ -152,9 +153,10 @@ class FitnessMachine(ABC, PropertiesManager):
         return self._get_supported_properties(self._m_features)
 
     @cached_property
-    def available_properties(self) -> tuple[str, ...]:
+    @classmethod
+    def available_properties(cls) -> tuple[str, ...]:
         """All properties that *MAY BE* supported by this machine type."""
-        return self._get_supported_properties(MachineFeatures(~0))
+        return cls._get_supported_properties(MachineFeatures(~0))
 
     @cached_property
     def supported_settings(self) -> tuple[str, ...]:
