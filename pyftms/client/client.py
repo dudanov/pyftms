@@ -86,7 +86,9 @@ class FitnessMachine(ABC, PropertiesManager):
         self._controller = MachineController(self._on_event)
 
     @classmethod
-    def _get_supported_properties(cls, features: MachineFeatures) -> tuple[str, ...]:
+    def _get_supported_properties(
+        cls, features: MachineFeatures = MachineFeatures(~0)
+    ) -> tuple[str, ...]:
         return cls._data_model._get_features(features)
 
     async def __aenter__(self):
@@ -153,10 +155,9 @@ class FitnessMachine(ABC, PropertiesManager):
         return self._get_supported_properties(self._m_features)
 
     @cached_property
-    @classmethod
-    def available_properties(cls) -> tuple[str, ...]:
+    def available_properties(self) -> tuple[str, ...]:
         """All properties that *MAY BE* supported by this machine type."""
-        return cls._get_supported_properties(MachineFeatures(~0))
+        return self._get_supported_properties()
 
     @cached_property
     def supported_settings(self) -> tuple[str, ...]:
