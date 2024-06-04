@@ -15,7 +15,9 @@ _PARAM_PATTERN = re.compile(r"[us][1-8](\.\d{1,8})?$")
 def _parse_fmt(fmt: str) -> tuple[int, float | None, bool]:
     if m := _PARAM_PATTERN.match(fmt):
         x = m.group(1)
+
         return int(fmt[1]), None if x is None else float(x), fmt[0] == "s"
+
     raise ValueError("Wrong serializer format.")
 
 
@@ -32,6 +34,7 @@ class NumSerializer(Serializer[SupportedNumbers]):
         self.size, self.factor, self.sign = _parse_fmt(format)
 
     def _none(self) -> int:
+        """Calculate FTMS `Data Not Available` value."""
         return (128 if self.sign else 256) * self.size - 1
 
     @override
@@ -51,15 +54,15 @@ class NumSerializer(Serializer[SupportedNumbers]):
         if len(data) != self.size:
             raise EOFError("Unexpected end of stream.")
 
-        val = int.from_bytes(data, "little", signed=self.sign)
+        value = int.from_bytes(data, "little", signed=self.sign)
 
-        if val == self._none():
-            return None
+        if value == self._none():
+            value = None
 
         elif self.factor:
-            val *= self.factor
+            value *= self.factor
 
-        return val
+        return value
 
     @override
     def serialize(self, dst: io.IOBase, value: SupportedNumbers) -> int:
