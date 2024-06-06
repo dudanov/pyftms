@@ -108,6 +108,9 @@ class SetupEventData(TypedDict, total=False):
 
 
 class UpdateEventData(TypedDict, total=False):
+    rssi: int
+    """RSSI."""
+
     cadence_average: float
     """
     Average Cadence.

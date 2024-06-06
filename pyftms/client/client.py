@@ -26,7 +26,7 @@ from ..models import (
     StopPauseCode,
 )
 from . import const as c
-from .backends import DataUpdater, FtmsCallback, MachineController
+from .backends import DataUpdater, FtmsCallback, MachineController, UpdateEvent
 from .manager import PropertiesManager
 from .properties import (
     DeviceInfo,
@@ -63,7 +63,6 @@ class FitnessMachine(ABC, PropertiesManager):
     _data_updater: DataUpdater
 
     _ble_device: BLEDevice
-    _advertisement_data: AdvertisementData | None
     _need_connect: bool
 
     # Static device info
@@ -84,9 +83,9 @@ class FitnessMachine(ABC, PropertiesManager):
         super().__init__(on_ftms_event)
 
         self._need_connect = False
-        self._advertisement_data = adv_data
-        self._ble_device = ble_device
         self._timeout = timeout
+
+        self.set_ble_device_and_advertisement_data(ble_device, adv_data)
 
         # Updaters
         self._data_updater = DataUpdater(self._data_model, self._on_event)
@@ -108,15 +107,19 @@ class FitnessMachine(ABC, PropertiesManager):
     # BLE SPECIFIC PROPERTIES
 
     def set_ble_device_and_advertisement_data(
-        self, ble_device: BLEDevice, adv_data: AdvertisementData
+        self, ble_device: BLEDevice, adv_data: AdvertisementData | None
     ):
-        self._advertisement_data = adv_data
         self._ble_device = ble_device
+
+        if adv_data:
+            self._properties["rssi"] = adv_data.rssi
+
+            if self._cb:
+                self._cb(UpdateEvent("update", {"rssi": adv_data.rssi}))
 
     @property
     def rssi(self) -> int | None:
-        if self._advertisement_data:
-            return self._advertisement_data.rssi
+        return self.get_property("rssi")
 
     @property
     def name(self) -> str:
