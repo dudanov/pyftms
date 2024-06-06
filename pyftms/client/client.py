@@ -9,6 +9,7 @@ from typing import Any, ClassVar
 
 from bleak import BleakClient
 from bleak.backends.device import BLEDevice
+from bleak.backends.scanner import AdvertisementData
 from bleak_retry_connector import (
     BleakClientWithServiceCache,
     close_stale_connections,
@@ -62,6 +63,7 @@ class FitnessMachine(ABC, PropertiesManager):
     _data_updater: DataUpdater
 
     _ble_device: BLEDevice
+    _advertisement_data: AdvertisementData | None
     _need_connect: bool
 
     # Static device info
@@ -74,6 +76,7 @@ class FitnessMachine(ABC, PropertiesManager):
     def __init__(
         self,
         ble_device: BLEDevice,
+        adv_data: AdvertisementData | None = None,
         *,
         timeout: float = 2.0,
         on_ftms_event: FtmsCallback | None = None,
@@ -81,6 +84,7 @@ class FitnessMachine(ABC, PropertiesManager):
         super().__init__(on_ftms_event)
 
         self._need_connect = False
+        self._advertisement_data = adv_data
         self._ble_device = ble_device
         self._timeout = timeout
 
@@ -103,8 +107,20 @@ class FitnessMachine(ABC, PropertiesManager):
 
     # BLE SPECIFIC PROPERTIES
 
-    def set_ble_device(self, ble_device: BLEDevice):
+    def set_ble_device_and_advertisement_data(
+        self, ble_device: BLEDevice, adv_data: AdvertisementData
+    ):
+        self._advertisement_data = adv_data
         self._ble_device = ble_device
+
+    @property
+    def rssi(self) -> int | None:
+        if self._advertisement_data:
+            return self._advertisement_data.rssi
+
+    @property
+    def name(self) -> str:
+        return self._ble_device.name or self._ble_device.address
 
     async def connect(self) -> None:
         """
@@ -197,14 +213,12 @@ class FitnessMachine(ABC, PropertiesManager):
 
         _LOGGER.debug("Initialization. Trying to establish connection.")
 
-        name = getattr(self._ble_device, "name", "Generic FTMS")
-
         await close_stale_connections(self._ble_device)
 
         self._cli = await establish_connection(
             BleakClientWithServiceCache,
             self._ble_device,
-            name,
+            self.name,
             disconnected_callback=self._on_disconnect,
         )
 

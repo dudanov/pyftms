@@ -54,12 +54,15 @@ def get_client(
     - `FitnessMachine` instance.
     """
 
+    adv_data = None
+
     if isinstance(adv_or_type, AdvertisementData):
+        adv_data = adv_or_type
         adv_or_type = get_machine_type_from_service_data(adv_or_type)
 
     cls = get_machine(adv_or_type)
 
-    return cls(ble_device, on_ftms_event=on_ftms_event, timeout=timeout)
+    return cls(ble_device, adv_data, on_ftms_event=on_ftms_event, timeout=timeout)
 
 
 async def get_client_from_address(
