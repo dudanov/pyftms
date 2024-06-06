@@ -61,9 +61,11 @@ class FitnessMachine(ABC, PropertiesManager):
 
     _data_updater: DataUpdater
 
+    _ble_device: BLEDevice
+    _need_connect: bool
+
     # Static device info
 
-    _device: BLEDevice
     _device_info: DeviceInfo
     _m_features: MachineFeatures
     _m_settings: MachineSettings
@@ -78,7 +80,8 @@ class FitnessMachine(ABC, PropertiesManager):
     ) -> None:
         super().__init__(on_ftms_event)
 
-        self._device = ble_device
+        self._need_connect = False
+        self._ble_device = ble_device
         self._timeout = timeout
 
         # Updaters
@@ -100,6 +103,9 @@ class FitnessMachine(ABC, PropertiesManager):
 
     # BLE SPECIFIC PROPERTIES
 
+    def set_ble_device(self, ble_device: BLEDevice):
+        self._ble_device = ble_device
+
     async def connect(self) -> None:
         """
         Opens a connection to the device. Reads necessary static information:
@@ -109,10 +115,14 @@ class FitnessMachine(ABC, PropertiesManager):
         * Ranges of parameters settings.
         """
 
+        self._need_connect = True
+
         await self._connect()
 
     async def disconnect(self) -> None:
         """Disconnects from device."""
+
+        self._need_connect = False
 
         if self.is_connected:
             assert self._cli
@@ -123,7 +133,7 @@ class FitnessMachine(ABC, PropertiesManager):
     def address(self) -> str:
         """Bluetooth address."""
 
-        return self._device.address
+        return self._ble_device.address
 
     @property
     def is_connected(self) -> bool:
@@ -182,18 +192,18 @@ class FitnessMachine(ABC, PropertiesManager):
     async def _connect(self) -> None:
         """Initialize connection and read necessary data from device."""
 
-        if self.is_connected:
+        if not self._need_connect or self.is_connected:
             return
 
         _LOGGER.debug("Initialization. Trying to establish connection.")
 
-        name = getattr(self._device, "name", "Generic FTMS")
+        name = getattr(self._ble_device, "name", "Generic FTMS")
 
-        await close_stale_connections(self._device)
+        await close_stale_connections(self._ble_device)
 
         self._cli = await establish_connection(
             BleakClientWithServiceCache,
-            self._device,
+            self._ble_device,
             name,
             disconnected_callback=self._on_disconnect,
         )
@@ -217,7 +227,9 @@ class FitnessMachine(ABC, PropertiesManager):
 
     def _on_disconnect(self, cli: BleakClient) -> None:
         """BLE disconnect handler."""
+
         _LOGGER.debug("Client is disconnected. Reset updaters states.")
+
         self._cli = None
         self._data_updater.reset()
         self._controller.reset()
@@ -225,10 +237,14 @@ class FitnessMachine(ABC, PropertiesManager):
     # COMMANDS
 
     async def _write_command(self, code: ControlCode | None = None, *args, **kwargs):
-        assert self._cli
-        return await self._controller.write_command(
-            self._cli, code, timeout=self._timeout, **kwargs
-        )
+        if self._need_connect:
+            await self._connect()
+            assert self._cli
+            return await self._controller.write_command(
+                self._cli, code, timeout=self._timeout, **kwargs
+            )
+
+        return ResultCode.FAILED
 
     async def reset(self) -> ResultCode:
         """Initiates the procedure to reset the controllable settings of a fitness machine."""
