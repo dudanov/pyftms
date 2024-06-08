@@ -5,7 +5,7 @@ import logging
 from abc import ABC
 from functools import cached_property
 from types import MappingProxyType
-from typing import Any, ClassVar
+from typing import Any, Callable, ClassVar
 
 from bleak import BleakClient
 from bleak.backends.device import BLEDevice
@@ -79,11 +79,13 @@ class FitnessMachine(ABC, PropertiesManager):
         *,
         timeout: float = 2.0,
         on_ftms_event: FtmsCallback | None = None,
+        on_disconnect: Callable[["FitnessMachine"], None] | None = None,
     ) -> None:
         super().__init__(on_ftms_event)
 
         self._need_connect = False
         self._timeout = timeout
+        self._disconnect_fn = on_disconnect
 
         self.set_ble_device_and_advertisement_data(ble_device, adv_data)
 
@@ -124,6 +126,9 @@ class FitnessMachine(ABC, PropertiesManager):
     @property
     def name(self) -> str:
         return self._ble_device.name or self._ble_device.address
+
+    def set_disconnect_callback(self, cb: Callable[["FitnessMachine"], None]):
+        self._disconnect_fn = cb
 
     async def connect(self) -> None:
         """
@@ -250,6 +255,9 @@ class FitnessMachine(ABC, PropertiesManager):
         self._cli = None
         self._data_updater.reset()
         self._controller.reset()
+
+        if self._disconnect_fn:
+            self._disconnect_fn(self)
 
     # COMMANDS
 
