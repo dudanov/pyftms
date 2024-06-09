@@ -19,7 +19,7 @@ from .backends import (
     UpdateEvent,
     UpdateEventData,
 )
-from .client import FitnessMachine
+from .client import DisconnectCallback, FitnessMachine
 from .const import FITNESS_MACHINE_SERVICE_UUID
 from .machines import get_machine
 from .manager import PropertiesManager
@@ -39,6 +39,7 @@ def get_client(
     *,
     timeout: float = 2.0,
     on_ftms_event: FtmsCallback | None = None,
+    on_disconnect: DisconnectCallback | None = None,
 ) -> FitnessMachine:
     """
     Creates an `FitnessMachine` instance from [Bleak](https://bleak.readthedocs.io/) discovered
@@ -62,7 +63,13 @@ def get_client(
 
     cls = get_machine(adv_or_type)
 
-    return cls(ble_device, adv_data, on_ftms_event=on_ftms_event, timeout=timeout)
+    return cls(
+        ble_device,
+        adv_data,
+        timeout=timeout,
+        on_ftms_event=on_ftms_event,
+        on_disconnect=on_disconnect,
+    )
 
 
 async def get_client_from_address(
@@ -71,6 +78,7 @@ async def get_client_from_address(
     scan_timeout: float = 10.0,
     timeout: float = 2.0,
     on_ftms_event: FtmsCallback | None = None,
+    on_disconnect: DisconnectCallback | None = None,
 ) -> FitnessMachine:
     """
     Scans for fitness machine with specified BLE address. On success creates and return an `FitnessMachine` instance.
@@ -97,7 +105,15 @@ async def get_client_from_address(
 
     try:
         dev, adv = await asyncio.wait_for(future, scan_timeout)
-        return get_client(dev, adv, on_ftms_event=on_ftms_event, timeout=timeout)
+
+        return get_client(
+            dev,
+            adv,
+            timeout=timeout,
+            on_ftms_event=on_ftms_event,
+            on_disconnect=on_disconnect,
+        )
+
     finally:
         await scanner.stop()
 
@@ -121,4 +137,5 @@ __all__ = [
     "DeviceInfo",
     "SettingRange",
     "PropertiesManager",
+    "DisconnectCallback",
 ]

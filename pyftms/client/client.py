@@ -41,6 +41,8 @@ from .properties import (
 
 _LOGGER = logging.getLogger(__name__)
 
+type DisconnectCallback = Callable[["FitnessMachine"], None]
+
 
 class FitnessMachine(ABC, PropertiesManager):
     """
@@ -79,13 +81,13 @@ class FitnessMachine(ABC, PropertiesManager):
         *,
         timeout: float = 2.0,
         on_ftms_event: FtmsCallback | None = None,
-        on_disconnect: Callable[["FitnessMachine"], None] | None = None,
+        on_disconnect: DisconnectCallback | None = None,
     ) -> None:
         super().__init__(on_ftms_event)
 
         self._need_connect = False
         self._timeout = timeout
-        self._disconnect_fn = on_disconnect
+        self._disconnect_cb = on_disconnect
 
         self.set_ble_device_and_advertisement_data(ble_device, adv_data)
 
@@ -120,15 +122,28 @@ class FitnessMachine(ABC, PropertiesManager):
                 self._cb(UpdateEvent("update", {"rssi": adv_data.rssi}))
 
     @property
+    def need_connect(self) -> bool:
+        """Connection state latch. `True` if connection is needed."""
+        return self._need_connect
+
+    @need_connect.setter
+    def need_connect(self, value: bool) -> None:
+        """Connection state latch. `True` if connection is needed."""
+        self._need_connect = value
+
+    @property
     def rssi(self) -> int | None:
+        """RSSI."""
         return self.get_property("rssi")
 
     @property
     def name(self) -> str:
+        """Device name or BLE address."""
         return self._ble_device.name or self._ble_device.address
 
-    def set_disconnect_callback(self, cb: Callable[["FitnessMachine"], None]):
-        self._disconnect_fn = cb
+    def set_disconnect_callback(self, cb: DisconnectCallback):
+        """Set disconnect callback."""
+        self._disconnect_cb = cb
 
     async def connect(self) -> None:
         """
@@ -256,8 +271,8 @@ class FitnessMachine(ABC, PropertiesManager):
         self._data_updater.reset()
         self._controller.reset()
 
-        if self._disconnect_fn:
-            self._disconnect_fn(self)
+        if self._disconnect_cb:
+            self._disconnect_cb(self)
 
     # COMMANDS
 
