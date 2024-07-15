@@ -39,10 +39,14 @@ class DataUpdater:
         await cli.stop_notify(uuid)
 
     def _on_notify(self, c: BleakGATTCharacteristic, data: bytearray) -> None:
-        self._result |= self._serializer.deserialize(data)._asdict()
+        _LOGGER.debug("Received notify: %s", data.hex(" ").upper())
+        data_ = self._serializer.deserialize(data)._asdict()
+        _LOGGER.debug("Received notify dict: %s", data_)
+        self._result |= data_
 
         # If `More Data` bit is set - we must wait for other messages.
         if data[0] & 1:
+            _LOGGER.debug("'More Data' bit is set. Waiting for next data.")
             return
 
         # My device sends a lot of null packets during wakeup and sleep mode.
@@ -51,6 +55,7 @@ class DataUpdater:
             update = self._result.items() ^ self._prev.items()
 
             if update := {k: self._result[k] for k, _ in update}:
+                _LOGGER.debug("Update data: %s", update)
                 update = cast(UpdateEventData, update)  # unsafe casting
                 update = UpdateEvent(event_id="update", event_data=update)
                 self._cb(update)
