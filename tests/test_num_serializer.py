@@ -26,7 +26,8 @@ def _test(fmt: str, num: int | float, buf: bytes):
 
     bio = io.BytesIO()
 
-    assert s.serialize(bio, num) == s.get_size()
+    sz = s.serialize(bio, num)
+    assert sz == s.get_size() and sz == len(buf)
     assert bio.getvalue() == buf
 
 
