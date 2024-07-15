@@ -60,14 +60,16 @@ class RealtimeSpeedData(RealtimeData):
 
 @dc.dataclass(frozen=True)
 class StepRateData(BaseModel):
-    step_rate_instant: int = dc.field(
+    step_rate_instant: int | None = dc.field(
+        default=None,
         metadata=model_meta(
             format="u2",
         ),
     )
     """Step Rate Instant"""
 
-    step_rate_average: int = dc.field(
+    step_rate_average: int | None = dc.field(
+        default=None,
         metadata=model_meta(
             format="u2",
         ),
@@ -94,14 +96,16 @@ class ElevationGainData(BaseModel):
 
 @dc.dataclass(frozen=True)
 class InclinationData(BaseModel):
-    inclination: float = dc.field(
+    inclination: float | None = dc.field(
+        default=None,
         metadata=model_meta(
             format="s2.1",
         ),
     )
     """Inclination"""
 
-    ramp_angle: float = dc.field(
+    ramp_angle: float | None = dc.field(
+        default=None,
         metadata=model_meta(
             format="s2.1",
         ),
@@ -111,21 +115,24 @@ class InclinationData(BaseModel):
 
 @dc.dataclass(frozen=True)
 class EnergyData(BaseModel):
-    energy_total: int = dc.field(
+    energy_total: int | None = dc.field(
+        default=None,
         metadata=model_meta(
             format="u2",
         ),
     )
     """Total Energy"""
 
-    energy_per_hour: int = dc.field(
+    energy_per_hour: int | None = dc.field(
+        default=None,
         metadata=model_meta(
             format="u2",
         ),
     )
     """Per Hour Energy"""
 
-    energy_per_minute: int = dc.field(
+    energy_per_minute: int | None = dc.field(
+        default=None,
         metadata=model_meta(
             format="u1",
         ),

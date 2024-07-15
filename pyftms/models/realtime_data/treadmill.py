@@ -15,14 +15,16 @@ from .common import (
 
 @dc.dataclass(frozen=True)
 class ForceOnBeltData(BaseModel):
-    force_on_belt: int = dc.field(
+    force_on_belt: int | None = dc.field(
+        default=None,
         metadata=model_meta(
             format="s2",
         ),
     )
     """Force On Belt"""
 
-    power_output: int = dc.field(
+    power_output: int | None = dc.field(
+        default=None,
         metadata=model_meta(
             format="s2",
         ),
