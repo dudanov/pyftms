@@ -16,6 +16,10 @@ optional = true
 [tool.poetry.group.docs.dependencies]
 pdoc = "*"
 
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.2"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
