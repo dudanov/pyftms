@@ -193,13 +193,13 @@ class UpdateEventData(TypedDict, total=False):
     """
     Average Pace.
 
-    Units: `km/m` or `seconds(500m)` for `Rower`.
+    Units: `km/m`.
     """
     pace_instant: int | float
     """
     Instantaneous Pace.
 
-    Units: `km/m` or `seconds(500m)` for `Rower`.
+    Units: `km/m`.
     """
     power_average: int
     """
@@ -243,17 +243,29 @@ class UpdateEventData(TypedDict, total=False):
 
     Units: `km/h`.
     """
+    split_time_average: float
+    """
+    Average Split Time.
+
+    Units: `s/500m`.
+    """
+    split_time_instant: float
+    """
+    Instantaneous Split Time.
+
+    Units: `s/500m`.
+    """
     step_rate_average: int
     """
     Average Step Rate.
 
-    Units: `step/m`.
+    Units: `spm`.
     """
     step_rate_instant: int
     """
     Instantaneous Step Rate.
 
-    Units: `step/m`.
+    Units: `spm`.
     """
     stride_count: int
     """
@@ -271,13 +283,13 @@ class UpdateEventData(TypedDict, total=False):
     """
     Average Stroke Rate.
 
-    Units: `stroke/m`.
+    Units: `spm`.
     """
     stroke_rate_instant: float
     """
     Instantaneous Stroke Rate.
 
-    Units: `stroke/m`.
+    Units: `spm`.
     """
     time_elapsed: int
     """

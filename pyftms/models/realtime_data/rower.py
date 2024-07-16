@@ -49,23 +49,23 @@ class RowerData(RealtimeData):
     )
     """Total Distance"""
 
-    pace_instant: int | None = dc.field(
+    split_time_instant: int | None = dc.field(
         default=None,
         metadata=model_meta(
             format="u2",
             features_bit=5,
         ),
     )
-    """Instantaneous Speed"""
+    """Instantaneous Split Time"""
 
-    pace_average: int | None = dc.field(
+    split_time_average: int | None = dc.field(
         default=None,
         metadata=model_meta(
             format="u2",
             features_bit=5,
         ),
     )
-    """Average Speed"""
+    """Average Split Time"""
 
     power_instant: int | None = dc.field(
         default=None,
