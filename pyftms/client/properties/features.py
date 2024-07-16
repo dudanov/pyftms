@@ -36,9 +36,9 @@ class MovementDirection(IntEnum, boundary=STRICT):
     Described in section **4.5.1.1 Flags Field**.
     """
 
-    FORWARD = auto()
+    FORWARD = 0
     """Move Forward."""
-    BACKWARD = auto()
+    BACKWARD = 1
     """Move Backward."""
 
 
