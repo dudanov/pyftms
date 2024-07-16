@@ -205,7 +205,7 @@ class PropertiesManager:
         return self.get_property(c.MOVEMENT_DIRECTION)
 
     @property
-    def pace_average(self) -> int | float:
+    def pace_average(self) -> float:
         """
         Average Pace.
 
@@ -214,7 +214,7 @@ class PropertiesManager:
         return self.get_property(c.PACE_AVERAGE)
 
     @property
-    def pace_instant(self) -> int | float:
+    def pace_instant(self) -> float:
         """
         Instantaneous Pace.
 

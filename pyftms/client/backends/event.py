@@ -189,13 +189,13 @@ class UpdateEventData(TypedDict, total=False):
 
     Units: `MovementDirection`.
     """
-    pace_average: int | float
+    pace_average: float
     """
     Average Pace.
 
     Units: `km/m`.
     """
-    pace_instant: int | float
+    pace_instant: float
     """
     Instantaneous Pace.
 
