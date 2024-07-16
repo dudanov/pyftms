@@ -209,7 +209,7 @@ class PropertiesManager:
         """
         Average Pace.
 
-        Units: `km/m` or `seconds(500m)` for `Rower`.
+        Units: `km/m`.
         """
         return self.get_property(c.PACE_AVERAGE)
 
@@ -218,7 +218,7 @@ class PropertiesManager:
         """
         Instantaneous Pace.
 
-        Units: `km/m` or `seconds(500m)` for `Rower`.
+        Units: `km/m`.
         """
         return self.get_property(c.PACE_INSTANT)
 
@@ -284,6 +284,24 @@ class PropertiesManager:
         Units: `km/h`.
         """
         return self.get_property(c.SPEED_INSTANT)
+
+    @property
+    def split_time_average(self) -> int:
+        """
+        Average Split Time.
+
+        Units: `s/500m`.
+        """
+        return self.get_property(c.SPLIT_TIME_AVERAGE)
+
+    @property
+    def split_time_instant(self) -> int:
+        """
+        Instantaneous Split Time.
+
+        Units: `s/500m`.
+        """
+        return self.get_property(c.SPLIT_TIME_INSTANT)
 
     @property
     def step_rate_average(self) -> int:

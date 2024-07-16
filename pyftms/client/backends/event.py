@@ -243,13 +243,13 @@ class UpdateEventData(TypedDict, total=False):
 
     Units: `km/h`.
     """
-    split_time_average: float
+    split_time_average: int
     """
     Average Split Time.
 
     Units: `s/500m`.
     """
-    split_time_instant: float
+    split_time_instant: int
     """
     Instantaneous Split Time.
 
