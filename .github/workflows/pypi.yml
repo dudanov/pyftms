@@ -39,6 +39,9 @@ jobs:
       - name: Install the project dependencies
         run: poetry install
 
+      - name: Run project tests
+        run: poetry run pytest
+
       - name: Poetry build
         run: poetry build
 
