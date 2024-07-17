@@ -1,12 +1,8 @@
 name: Publish Documentation
 
-# build the documentation whenever there are new commits on main
 on:
   push:
-    branches:
-      - main
-    paths-ignore:
-      - ".github/**"
+    tags: ["v[0-9].[0-9]+.[0-9]+"]
 
 # security: restrict permissions for CI jobs.
 permissions:
