@@ -6,28 +6,37 @@ jobs:
   build:
     name: Run tests
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         python-version: ["3.11", "3.12"]
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+
       - name: Install poetry
         uses: abatilo/actions-poetry@v3
+
       - name: Setup a local virtual environment (if no poetry.toml file)
         run: |
           poetry config virtualenvs.create true --local
           poetry config virtualenvs.in-project true --local
+
       - uses: actions/cache@v4
         name: Define a cache for the virtual environment based on the dependencies lock file
         with:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
+
       - name: Install the project dependencies
         run: poetry install
+
       - uses: pavelzw/pytest-action@v2
         with:
+          report-title: PyFTMS Test Report
           custom-pytest: poetry run pytest
