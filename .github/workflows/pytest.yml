@@ -9,6 +9,8 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11", "3.12"]
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
