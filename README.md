@@ -10,9 +10,8 @@
 
 ## Requirments
 
-1. `python >= 3.11`
-2. `bleak >= 0.21.0`
-3. `bleak-retry-connector == 3.5.0`
+1. `bleak`
+2. `bleak-retry-connector`
 
 ## Install it from PyPI
 
