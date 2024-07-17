@@ -9,8 +9,6 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11", "3.12"]
-    permissions:
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -29,10 +27,7 @@ jobs:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: Install the project dependencies
-        run: poetry install
+        run: poetry install --with dev
       - uses: pavelzw/pytest-action@v2
         with:
-          emoji: false
-          verbose: false
-          job-summary: true
           custom-pytest: poetry run pytest
