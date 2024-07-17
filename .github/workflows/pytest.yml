@@ -1,4 +1,4 @@
-name: pytest
+name: Run Pytest
 
 on: [push, pull_request]
 
@@ -38,5 +38,4 @@ jobs:
 
       - uses: pavelzw/pytest-action@v2
         with:
-          report-title: PyFTMS Test Report
           custom-pytest: poetry run pytest
