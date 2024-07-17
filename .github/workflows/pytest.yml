@@ -27,7 +27,7 @@ jobs:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: Install the project dependencies
-        run: poetry install --with dev
+        run: poetry install
       - uses: pavelzw/pytest-action@v2
         with:
           custom-pytest: poetry run pytest
