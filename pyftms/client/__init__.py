@@ -21,7 +21,6 @@ from .backends import (
     UpdateEventData,
 )
 from .client import DisconnectCallback, FitnessMachine
-from .const import FITNESS_MACHINE_SERVICE_UUID
 from .machines import get_machine
 from .manager import PropertiesManager
 from .properties import (
@@ -103,9 +102,7 @@ async def get_client_from_address(
                     if dev.address.lower() != address.lower():
                         continue
 
-                    data = adv.service_data.get(FITNESS_MACHINE_SERVICE_UUID)
-
-                    if data is not None and len(data) == 3:
+                    try:
                         return get_client(
                             dev,
                             adv,
@@ -113,6 +110,9 @@ async def get_client_from_address(
                             on_ftms_event=on_ftms_event,
                             on_disconnect=on_disconnect,
                         )
+
+                    except NotFitnessMachineError:
+                        pass
 
         except asyncio.TimeoutError:
             pass
