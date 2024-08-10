@@ -4,7 +4,7 @@
 import asyncio
 import logging
 
-from pyftms import get_client_from_address, FtmsEvents, FitnessMachine
+from pyftms import FitnessMachine, FtmsEvents, get_client_from_address
 
 ADDRESS = "29:84:5A:22:A4:11"
 

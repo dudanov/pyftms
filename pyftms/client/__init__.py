@@ -6,6 +6,7 @@ import asyncio
 from bleak import BleakScanner
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
+from bleak.exc import BleakDeviceNotFoundError
 
 from .backends import (
     ControlEvent,
@@ -50,6 +51,7 @@ def get_client(
     - `adv_or_type` - Service [advertisement data](https://bleak.readthedocs.io/en/latest/backends/index.html#bleak.backends.scanner.AdvertisementData) or `MachineType`.
     - `timeout` - Control operation timeout. Defaults to 2.0s.
     - `on_ftms_event` - Callback for receiving fitness machine events.
+    - `on_disconnect` - Disconnetion callback.
 
     Return:
     - `FitnessMachine` instance.
@@ -88,34 +90,34 @@ async def get_client_from_address(
     - `scan_timeout` - Scanning timeout. Defaults to 10.0s.
     - `timeout` - Control operation timeout. Defaults to 2.0s.
     - `on_ftms_event` - Callback for receiving fitness machine events.
+    - `on_disconnect` - Disconnetion callback.
 
     Return:
-    - `FitnessMachine` instance.
+    - `FitnessMachine` instance if device found successfully.
     """
 
-    future: asyncio.Future[tuple[BLEDevice, AdvertisementData]] = asyncio.Future()
+    async with BleakScanner() as scanner:
+        try:
+            async with asyncio.timeout(scan_timeout):
+                async for dev, adv in scanner.advertisement_data():
+                    if dev.address.lower() != address.lower():
+                        continue
 
-    def _on_device(dev: BLEDevice, adv: AdvertisementData) -> None:
-        if not future.done() and dev.address.lower() == address.lower():
-            future.set_result((dev, adv))
+                    data = adv.service_data.get(FITNESS_MACHINE_SERVICE_UUID)
 
-    scanner = BleakScanner(_on_device, [FITNESS_MACHINE_SERVICE_UUID])
+                    if data is not None and len(data) == 3:
+                        return get_client(
+                            dev,
+                            adv,
+                            timeout=timeout,
+                            on_ftms_event=on_ftms_event,
+                            on_disconnect=on_disconnect,
+                        )
 
-    await scanner.start()
+        except asyncio.TimeoutError:
+            pass
 
-    try:
-        dev, adv = await asyncio.wait_for(future, scan_timeout)
-
-        return get_client(
-            dev,
-            adv,
-            timeout=timeout,
-            on_ftms_event=on_ftms_event,
-            on_disconnect=on_disconnect,
-        )
-
-    finally:
-        await scanner.stop()
+        raise BleakDeviceNotFoundError(address)
 
 
 __all__ = [

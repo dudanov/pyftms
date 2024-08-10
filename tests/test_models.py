@@ -1,7 +1,7 @@
 import pytest
 
-from pyftms.serializer import BaseModel, get_serializer, ModelSerializer
 from pyftms.models import TreadmillData
+from pyftms.serializer import BaseModel, ModelSerializer, get_serializer
 
 
 @pytest.mark.parametrize(
