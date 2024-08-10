@@ -117,7 +117,7 @@ async def get_client_from_address(
         except asyncio.TimeoutError:
             pass
 
-        raise BleakDeviceNotFoundError(address)
+    raise BleakDeviceNotFoundError(address)
 
 
 __all__ = [
