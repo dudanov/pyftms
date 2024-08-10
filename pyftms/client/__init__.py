@@ -50,7 +50,7 @@ def get_client(
     - `adv_or_type` - Service [advertisement data](https://bleak.readthedocs.io/en/latest/backends/index.html#bleak.backends.scanner.AdvertisementData) or `MachineType`.
     - `timeout` - Control operation timeout. Defaults to 2.0s.
     - `on_ftms_event` - Callback for receiving fitness machine events.
-    - `on_disconnect` - Disconnetion callback.
+    - `on_disconnect` - Disconnection callback.
 
     Return:
     - `FitnessMachine` instance.
@@ -89,7 +89,7 @@ async def get_client_from_address(
     - `scan_timeout` - Scanning timeout. Defaults to 10.0s.
     - `timeout` - Control operation timeout. Defaults to 2.0s.
     - `on_ftms_event` - Callback for receiving fitness machine events.
-    - `on_disconnect` - Disconnetion callback.
+    - `on_disconnect` - Disconnection callback.
 
     Return:
     - `FitnessMachine` instance if device found successfully.
