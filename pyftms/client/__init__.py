@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import asyncio
+import logging
 
 from bleak import BleakScanner
 from bleak.backends.device import BLEDevice
@@ -31,6 +32,8 @@ from .properties import (
     SettingRange,
     get_machine_type_from_service_data,
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def get_client(
@@ -95,6 +98,8 @@ async def get_client_from_address(
     - `FitnessMachine` instance if device found successfully.
     """
 
+    _exc = None
+
     async with BleakScanner() as scanner:
         try:
             async with asyncio.timeout(scan_timeout):
@@ -111,13 +116,14 @@ async def get_client_from_address(
                             on_disconnect=on_disconnect,
                         )
 
-                    except NotFitnessMachineError:
-                        pass
+                    except NotFitnessMachineError as e:
+                        _exc = e
+                        _LOGGER.debug("Advertisement data has no valid FTMS data.")
 
         except asyncio.TimeoutError:
             pass
 
-    raise BleakDeviceNotFoundError(address)
+    raise _exc or BleakDeviceNotFoundError(address)
 
 
 __all__ = [
