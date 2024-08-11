@@ -162,3 +162,5 @@ cython_debug/
 docs/**
 !docs/logo.svg
 !docs/favicon.ico
+
+.vscode/**
