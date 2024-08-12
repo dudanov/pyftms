@@ -3,6 +3,7 @@
 
 import asyncio
 import logging
+from collections.abc import AsyncIterator
 
 from bleak import BleakScanner
 from bleak.backends.device import BLEDevice
@@ -76,7 +77,9 @@ def get_client(
     )
 
 
-async def discover_ftms_devices(discover_time: float = 10):
+async def discover_ftms_devices(
+    discover_time: float = 10,
+) -> AsyncIterator[tuple[BLEDevice, MachineType]]:
     """
     Discover FTMS devices.
 
