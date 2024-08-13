@@ -164,3 +164,6 @@ docs/**
 !docs/favicon.ico
 
 .vscode/**
+
+# Office temporary files
+~$*.*
