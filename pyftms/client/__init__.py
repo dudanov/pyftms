@@ -87,7 +87,7 @@ async def discover_ftms_devices(
     - `discover_time` - Discover time. Defaults to 10s.
 
     Return:
-    - `FitnessMachine` instance if device found successfully.
+    - `AsyncIterator[tuple[BLEDevice, MachineType]]` async generator of `BLEDevice` and `MachineType` tuples.
     """
 
     devices: set[str] = set()
