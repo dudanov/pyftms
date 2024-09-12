@@ -23,6 +23,7 @@ from .client import (
     TrainingStatusEventData,
     UpdateEvent,
     UpdateEventData,
+    discover_ftms_devices,
     get_client,
     get_client_from_address,
     get_machine_type_from_service_data,
@@ -39,6 +40,7 @@ from .models import (
 )
 
 __all__ = [
+    "discover_ftms_devices",
     "get_client",
     "get_client_from_address",
     "get_machine_type_from_service_data",
