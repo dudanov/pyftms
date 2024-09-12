@@ -5,12 +5,28 @@ import dataclasses as dc
 
 from .common import (
     BaseModel,
-    ElevationGainData,
     EnergyData,
     InclinationData,
     RealtimeSpeedData,
     model_meta,
 )
+
+
+@dc.dataclass(frozen=True)
+class ElevationGainData(BaseModel):
+    elevation_gain_positive: int = dc.field(
+        metadata=model_meta(
+            format="u2.1",
+        ),
+    )
+    """Elevation Gain Positive"""
+
+    elevation_gain_negative: int = dc.field(
+        metadata=model_meta(
+            format="u2.1",
+        ),
+    )
+    """Elevation Gain Negative"""
 
 
 @dc.dataclass(frozen=True)
@@ -62,7 +78,7 @@ class TreadmillData(RealtimeSpeedData):
     pace_instant: float | None = dc.field(
         default=None,
         metadata=model_meta(
-            format="s1.1",
+            format="u1.1",
             features_bit=5,
         ),
     )
@@ -71,7 +87,7 @@ class TreadmillData(RealtimeSpeedData):
     pace_average: float | None = dc.field(
         default=None,
         metadata=model_meta(
-            format="s1.1",
+            format="u1.1",
             features_bit=5,
         ),
     )
@@ -97,7 +113,7 @@ class TreadmillData(RealtimeSpeedData):
     metabolic_equivalent: float | None = dc.field(
         default=None,
         metadata=model_meta(
-            format="s1.1",
+            format="u1.1",
             features_bit=11,
         ),
     )
@@ -128,3 +144,11 @@ class TreadmillData(RealtimeSpeedData):
         ),
     )
     """Force On Belt and Power Output"""
+
+    step_count: int | None = dc.field(
+        default=None,
+        metadata=model_meta(
+            format="u3",
+        ),
+    )
+    """Steps Count"""

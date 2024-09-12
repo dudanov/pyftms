@@ -255,6 +255,12 @@ class UpdateEventData(TypedDict, total=False):
 
     Units: `s/500m`.
     """
+    step_count: int
+    """
+    Step Count.
+
+    Units: `step`.
+    """
     step_rate_average: int
     """
     Average Step Rate.

@@ -137,7 +137,7 @@ class PropertiesManager:
         """
         Energy Per Hour.
 
-        Units: `kcal`.
+        Units: `kcal/h`.
         """
         return self.get_property(c.ENERGY_PER_HOUR)
 
@@ -146,7 +146,7 @@ class PropertiesManager:
         """
         Energy Per Minute.
 
-        Units: `kcal`.
+        Units: `kcal/min`.
         """
         return self.get_property(c.ENERGY_PER_MINUTE)
 
@@ -209,7 +209,7 @@ class PropertiesManager:
         """
         Average Pace.
 
-        Units: `km/m`.
+        Units: `min/km`.
         """
         return self.get_property(c.PACE_AVERAGE)
 
@@ -218,7 +218,7 @@ class PropertiesManager:
         """
         Instantaneous Pace.
 
-        Units: `km/m`.
+        Units: `min/km`.
         """
         return self.get_property(c.PACE_INSTANT)
 
@@ -304,11 +304,20 @@ class PropertiesManager:
         return self.get_property(c.SPLIT_TIME_INSTANT)
 
     @property
+    def step_count(self) -> int:
+        """
+        Step Count.
+
+        Units: `step`.
+        """
+        return self.get_property(c.STEP_COUNT)
+
+    @property
     def step_rate_average(self) -> int:
         """
         Average Step Rate.
 
-        Units: `step/m`.
+        Units: `step/min`.
         """
         return self.get_property(c.STEP_RATE_AVERAGE)
 
@@ -317,7 +326,7 @@ class PropertiesManager:
         """
         Instantaneous Step Rate.
 
-        Units: `step/m`.
+        Units: `step/min`.
         """
         return self.get_property(c.STEP_RATE_INSTANT)
 
@@ -344,7 +353,7 @@ class PropertiesManager:
         """
         Average Stroke Rate.
 
-        Units: `stroke/m`.
+        Units: `stroke/min`.
         """
         return self.get_property(c.STROKE_RATE_AVERAGE)
 
@@ -353,7 +362,7 @@ class PropertiesManager:
         """
         Instantaneous Stroke Rate.
 
-        Units: `stroke/m`.
+        Units: `stroke/min`.
         """
         return self.get_property(c.STROKE_RATE_INSTANT)
 

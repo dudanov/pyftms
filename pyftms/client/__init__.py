@@ -3,6 +3,7 @@
 
 import asyncio
 import logging
+from collections.abc import AsyncIterator
 
 from bleak import BleakScanner
 from bleak.backends.device import BLEDevice
@@ -40,7 +41,7 @@ def get_client(
     ble_device: BLEDevice,
     adv_or_type: AdvertisementData | MachineType,
     *,
-    timeout: float = 2.0,
+    timeout: float = 2,
     on_ftms_event: FtmsCallback | None = None,
     on_disconnect: DisconnectCallback | None = None,
 ) -> FitnessMachine:
@@ -76,11 +77,50 @@ def get_client(
     )
 
 
+async def discover_ftms_devices(
+    discover_time: float = 10,
+) -> AsyncIterator[tuple[BLEDevice, MachineType]]:
+    """
+    Discover FTMS devices.
+
+    Parameters:
+    - `discover_time` - Discover time. Defaults to 10s.
+
+    Return:
+    - `AsyncIterator[tuple[BLEDevice, MachineType]]` async generator of `BLEDevice` and `MachineType` tuples.
+    """
+
+    devices: set[str] = set()
+
+    async with BleakScanner() as scanner:
+        try:
+            async with asyncio.timeout(discover_time):
+                async for dev, adv in scanner.advertisement_data():
+                    if dev.address in devices:
+                        continue
+
+                    try:
+                        mt = get_machine_type_from_service_data(adv)
+                        devices.add(dev.address)
+
+                        _LOGGER.debug(
+                            f"Discovered new FTMS device (address='{dev.address}', type='{mt!r}')."
+                        )
+
+                        yield dev, mt
+
+                    except NotFitnessMachineError:
+                        pass
+
+        except asyncio.TimeoutError:
+            pass
+
+
 async def get_client_from_address(
     address: str,
     *,
-    scan_timeout: float = 10.0,
-    timeout: float = 2.0,
+    scan_timeout: float = 10,
+    timeout: float = 2,
     on_ftms_event: FtmsCallback | None = None,
     on_disconnect: DisconnectCallback | None = None,
 ) -> FitnessMachine:
@@ -98,35 +138,23 @@ async def get_client_from_address(
     - `FitnessMachine` instance if device found successfully.
     """
 
-    _exc = None
+    async for dev, mt in discover_ftms_devices(scan_timeout):
+        if dev.address.lower() != address.lower():
+            continue
 
-    async with BleakScanner() as scanner:
-        try:
-            async with asyncio.timeout(scan_timeout):
-                async for dev, adv in scanner.advertisement_data():
-                    if dev.address.lower() != address.lower():
-                        continue
+        return get_client(
+            dev,
+            mt,
+            timeout=timeout,
+            on_ftms_event=on_ftms_event,
+            on_disconnect=on_disconnect,
+        )
 
-                    try:
-                        return get_client(
-                            dev,
-                            adv,
-                            timeout=timeout,
-                            on_ftms_event=on_ftms_event,
-                            on_disconnect=on_disconnect,
-                        )
-
-                    except NotFitnessMachineError as e:
-                        _exc = e
-                        _LOGGER.debug("Advertisement data has no valid FTMS data.")
-
-        except asyncio.TimeoutError:
-            pass
-
-    raise _exc or BleakDeviceNotFoundError(address)
+    raise BleakDeviceNotFoundError(address)
 
 
 __all__ = [
+    "discover_ftms_devices",
     "get_client",
     "get_client_from_address",
     "MachineType",
