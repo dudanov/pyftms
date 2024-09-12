@@ -104,7 +104,7 @@ async def discover_ftms_devices(
                         devices.add(dev.address)
 
                         _LOGGER.debug(
-                            f"Discovered new FTMS device (address='{dev.address}', type='{mt:!r}')."
+                            f"Discovered new FTMS device (address='{dev.address}', type='{mt!r}')."
                         )
 
                         yield dev, mt
