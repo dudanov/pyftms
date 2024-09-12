@@ -59,42 +59,6 @@ class RealtimeSpeedData(RealtimeData):
 
 
 @dc.dataclass(frozen=True)
-class StepRateData(BaseModel):
-    step_rate_instant: int | None = dc.field(
-        default=None,
-        metadata=model_meta(
-            format="u2",
-        ),
-    )
-    """Step Rate Instant"""
-
-    step_rate_average: int | None = dc.field(
-        default=None,
-        metadata=model_meta(
-            format="u2",
-        ),
-    )
-    """Step Rate Average"""
-
-
-@dc.dataclass(frozen=True)
-class ElevationGainData(BaseModel):
-    elevation_gain_positive: int = dc.field(
-        metadata=model_meta(
-            format="u2",
-        ),
-    )
-    """Elevation Gain Positive"""
-
-    elevation_gain_negative: int = dc.field(
-        metadata=model_meta(
-            format="u2",
-        ),
-    )
-    """Elevation Gain Negative"""
-
-
-@dc.dataclass(frozen=True)
 class InclinationData(BaseModel):
     inclination: float | None = dc.field(
         default=None,

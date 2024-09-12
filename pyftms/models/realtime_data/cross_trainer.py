@@ -5,13 +5,48 @@ import dataclasses as dc
 
 from ...client.properties import MovementDirection
 from .common import (
-    ElevationGainData,
+    BaseModel,
     EnergyData,
     InclinationData,
     RealtimeSpeedData,
-    StepRateData,
     model_meta,
 )
+
+
+@dc.dataclass(frozen=True)
+class ElevationGainData(BaseModel):
+    elevation_gain_positive: int = dc.field(
+        metadata=model_meta(
+            format="u2",
+        ),
+    )
+    """Elevation Gain Positive"""
+
+    elevation_gain_negative: int = dc.field(
+        metadata=model_meta(
+            format="u2",
+        ),
+    )
+    """Elevation Gain Negative"""
+
+
+@dc.dataclass(frozen=True)
+class StepRateData(BaseModel):
+    step_rate_instant: int | None = dc.field(
+        default=None,
+        metadata=model_meta(
+            format="u2",
+        ),
+    )
+    """Step Rate Instant"""
+
+    step_rate_average: int | None = dc.field(
+        default=None,
+        metadata=model_meta(
+            format="u2",
+        ),
+    )
+    """Step Rate Average"""
 
 
 @dc.dataclass(frozen=True)
@@ -105,7 +140,7 @@ class CrossTrainerData(RealtimeSpeedData):
     metabolic_equivalent: float | None = dc.field(
         default=None,
         metadata=model_meta(
-            format="s1.1",
+            format="u1.1",
             features_bit=11,
         ),
     )

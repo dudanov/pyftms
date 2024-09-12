@@ -114,7 +114,7 @@ class RowerData(RealtimeData):
     metabolic_equivalent: float | None = dc.field(
         default=None,
         metadata=model_meta(
-            format="s1.1",
+            format="u1.1",
             features_bit=11,
         ),
     )
