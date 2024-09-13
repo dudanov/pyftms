@@ -100,17 +100,18 @@ async def discover_ftms_devices(
                         continue
 
                     try:
-                        mt = get_machine_type_from_service_data(adv)
-                        devices.add(dev.address)
-
-                        _LOGGER.debug(
-                            f"Discovered new FTMS device (address='{dev.address}', type='{mt!r}')."
-                        )
-
-                        yield dev, mt
+                        machine_type = get_machine_type_from_service_data(adv)
 
                     except NotFitnessMachineError:
-                        pass
+                        continue
+
+                    devices.add(dev.address)
+
+                    _LOGGER.debug(
+                        f" #{len(devices)} - {machine_type.name}: address='{dev.address}', name='{dev.name}'."
+                    )
+
+                    yield dev, machine_type
 
         except asyncio.TimeoutError:
             pass
@@ -138,17 +139,15 @@ async def get_client_from_address(
     - `FitnessMachine` instance if device found successfully.
     """
 
-    async for dev, mt in discover_ftms_devices(scan_timeout):
-        if dev.address.lower() != address.lower():
-            continue
-
-        return get_client(
-            dev,
-            mt,
-            timeout=timeout,
-            on_ftms_event=on_ftms_event,
-            on_disconnect=on_disconnect,
-        )
+    async for dev, machine_type in discover_ftms_devices(scan_timeout):
+        if dev.address.lower() == address.lower():
+            return get_client(
+                dev,
+                machine_type,
+                timeout=timeout,
+                on_ftms_event=on_ftms_event,
+                on_disconnect=on_disconnect,
+            )
 
     raise BleakDeviceNotFoundError(address)
 

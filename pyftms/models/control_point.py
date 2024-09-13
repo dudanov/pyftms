@@ -178,7 +178,7 @@ class ControlModel(CodeSwitchModel[ControlCode]):
     target_resistance: float | None = dc.field(
         default=None,
         metadata=model_meta(
-            format="u1.1",
+            format="s2.1",
             features_bit=2,
             code=ControlCode.RESISTANCE,
         ),
