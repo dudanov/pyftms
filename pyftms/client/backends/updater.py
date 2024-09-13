@@ -33,11 +33,6 @@ class DataUpdater:
         self.reset()
         await cli.start_notify(uuid, self._on_notify)
 
-    async def unsubscribe(self, cli: BleakClient, uuid: str) -> None:
-        """Unubscribe from notification."""
-        self.reset()
-        await cli.stop_notify(uuid)
-
     def _on_notify(self, c: BleakGATTCharacteristic, data: bytearray) -> None:
         _LOGGER.debug("Received notify: %s", data.hex(" ").upper())
         data_ = self._serializer.deserialize(data)._asdict()

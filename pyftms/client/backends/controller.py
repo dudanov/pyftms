@@ -116,22 +116,6 @@ class MachineController:
 
         self._subscribed = True
 
-    async def unsubscribe(self, cli: BleakClient) -> None:
-        """Unubscribe from available notifications."""
-        if not self._subscribed:
-            return
-
-        if c := cli.services.get_characteristic(FITNESS_MACHINE_CONTROL_POINT_UUID):
-            await cli.stop_notify(c)
-
-        if c := cli.services.get_characteristic(FITNESS_MACHINE_STATUS_UUID):
-            await cli.stop_notify(c)
-
-        if c := cli.services.get_characteristic(TRAINING_STATUS_UUID):
-            await cli.stop_notify(c)
-
-        self._subscribed = False
-
     def reset(self):
         """Resetting state. Call while disconnection event."""
         self._subscribed = False

@@ -165,7 +165,6 @@ class FitnessMachine(ABC, PropertiesManager):
 
         if self.is_connected:
             assert self._cli
-            await self._disable_updates()
             await self._cli.disconnect()
 
     @property
@@ -218,16 +217,6 @@ class FitnessMachine(ABC, PropertiesManager):
         """Ranges of supported settings."""
         return self._settings_ranges
 
-    async def _enable_updates(self) -> None:
-        assert self._cli
-        await self._controller.subscribe(self._cli)
-        await self._data_updater.subscribe(self._cli, self._data_uuid)
-
-    async def _disable_updates(self) -> None:
-        assert self._cli
-        await self._data_updater.unsubscribe(self._cli, self._data_uuid)
-        await self._controller.unsubscribe(self._cli)
-
     async def _connect(self) -> None:
         """Initialize connection and read necessary data from device."""
 
@@ -260,12 +249,13 @@ class FitnessMachine(ABC, PropertiesManager):
                 self._cli, self._m_settings
             )
 
-        await self._enable_updates()
+        await self._controller.subscribe(self._cli)
+        await self._data_updater.subscribe(self._cli, self._data_uuid)
 
     def _on_disconnect(self, cli: BleakClient) -> None:
         """BLE disconnect handler."""
 
-        _LOGGER.debug("Client is disconnected. Reset updaters states.")
+        _LOGGER.debug("Client disconnected. Reset updaters states.")
 
         self._cli = None
         self._data_updater.reset()
