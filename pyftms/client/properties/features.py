@@ -140,7 +140,7 @@ class SettingRange(NamedTuple):
 
 
 async def read_features(cli: BleakClient) -> tuple[MachineFeatures, MachineSettings]:
-    _LOGGER.debug("Reading features and settings.")
+    _LOGGER.debug("Reading features and settings...")
 
     try:
         data = await cli.read_gatt_char(FITNESS_MACHINE_FEATURE_UUID)
@@ -179,7 +179,7 @@ async def read_supported_ranges(
 ) -> MappingProxyType[str, SettingRange]:
     result: Mapping[str, SettingRange] = {}
 
-    _LOGGER.debug("Reading settings value ranges.")
+    _LOGGER.debug("Reading settings value ranges...")
 
     if MachineSettings.SPEED in settings:
         result[TARGET_SPEED] = await _range(cli, SPEED_RANGE_UUID, "u2.01")
@@ -198,8 +198,6 @@ async def read_supported_ranges(
     if MachineSettings.HEART_RATE in settings:
         result[TARGET_HEART_RATE] = await _range(cli, HEART_RATE_RANGE_UUID, "u1")
 
-    result = MappingProxyType(result)
+    _LOGGER.debug(f"Settings ranges: {result}")
 
-    _LOGGER.debug("Settings ranges: %s", result)
-
-    return result
+    return MappingProxyType(result)
