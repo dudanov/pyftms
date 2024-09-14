@@ -156,8 +156,8 @@ async def read_features(cli: BleakClient) -> tuple[MachineFeatures, MachineSetti
         _LOGGER.exception("Failed reading machine features and settings.")
         raise
 
-    _LOGGER.debug(features)
-    _LOGGER.debug(settings)
+    _LOGGER.debug(f"Features: {", ".join(x.name for x in features)}")
+    _LOGGER.debug(f"Settings: {", ".join(x.name for x in settings)}")
 
     return features, settings
 
