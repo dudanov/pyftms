@@ -12,7 +12,7 @@ from pyftms.serializer import BaseModel, ModelSerializer, get_serializer
             b"\x00\x00\x00\x00",
             {"speed_instant": 0},
         ),
-        # Issue #3 case test
+        # Testing `hassio-ftms` issue #3: https://github.com/dudanov/hassio-ftms/issues/3
         (
             TreadmillData,
             b"\x9c\x25\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
