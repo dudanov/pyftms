@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyftms"
-version = "0.3.0"
+version = "0.3.1"
 description = "PyFTMS - Python Fitness Machine Service client library."
 authors = ["Sergey V. DUDANOV <sergey.dudanov@gmail.com>"]
 readme = "README.md"
@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.12,<3.14"
 bleak = ">=0.21.0"
-bleak-retry-connector = "3.6.0"
+bleak-retry-connector = ">=3.5.0"
 
 [tool.poetry.group.docs]
 optional = true
