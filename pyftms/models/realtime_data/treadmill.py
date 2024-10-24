@@ -149,6 +149,7 @@ class TreadmillData(RealtimeSpeedData):
         default=None,
         metadata=model_meta(
             format="u3",
+            features_bit=6,
         ),
     )
     """Steps Count"""
