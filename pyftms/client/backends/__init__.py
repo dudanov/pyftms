@@ -10,8 +10,6 @@ from .event import (
     SetupEventData,
     SpinDownEvent,
     SpinDownEventData,
-    TrainingStatusEvent,
-    TrainingStatusEventData,
     UpdateEvent,
     UpdateEventData,
 )
@@ -27,8 +25,6 @@ __all__ = [
     "UpdateEvent",
     "SetupEvent",
     "ControlEvent",
-    "TrainingStatusEvent",
     "SpinDownEvent",
     "SpinDownEventData",
-    "TrainingStatusEventData",
 ]

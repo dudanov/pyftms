@@ -14,6 +14,7 @@ ENERGY_TOTAL = "energy_total"
 FORCE_ON_BELT = "force_on_belt"
 HEART_RATE = "heart_rate"
 INCLINATION = "inclination"
+INDOOR_BIKE_SIMULATION = "indoor_bike_simulation"
 METABOLIC_EQUIVALENT = "metabolic_equivalent"
 MOVEMENT_DIRECTION = "movement_direction"
 PACE_AVERAGE = "pace_average"
@@ -36,7 +37,7 @@ STROKE_RATE_AVERAGE = "stroke_rate_average"
 STROKE_RATE_INSTANT = "stroke_rate_instant"
 TIME_ELAPSED = "time_elapsed"
 TIME_REMAINING = "time_remaining"
-INDOOR_BIKE_SIMULATION = "indoor_bike_simulation"
+TRAINING_STATUS = "training_status"
 
 # TARGET SETTINGS ATTRIBUTES
 

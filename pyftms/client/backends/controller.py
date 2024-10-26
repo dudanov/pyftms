@@ -37,8 +37,8 @@ from .event import (
     SetupEventData,
     SpinDownEvent,
     SpinDownEventData,
-    TrainingStatusEvent,
-    TrainingStatusEventData,
+    UpdateEvent,
+    UpdateEventData,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -254,12 +254,12 @@ class MachineController:
         bio = io.BytesIO(data)
         status = TrainingStatusModel._deserialize(bio)
 
-        status_data = TrainingStatusEventData(code=status.code)
+        status_data = UpdateEventData(training_status=status.code)
 
         if TrainingStatusFlags.STRING_PRESENT in status.flags:
             if b := bio.read():
-                status_data["string"] = b.decode(encoding="utf-8")
+                status_data["training_status_string"] = b.decode(encoding="utf-8")
 
-        event = TrainingStatusEvent(event_id="training_status", event_data=status_data)
+        event = UpdateEvent(event_id="update", event_data=status_data)
 
         self._cb(event)

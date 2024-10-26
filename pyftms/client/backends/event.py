@@ -1,7 +1,7 @@
 # Copyright 2024, Sergey Dudanov
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Callable, Literal, NamedTuple, NotRequired, TypedDict
+from typing import Callable, Literal, NamedTuple, TypedDict
 
 from ...models import (
     IndoorBikeSimulationParameters,
@@ -309,24 +309,14 @@ class UpdateEventData(TypedDict, total=False):
 
     Units: `s`.
     """
-
-
-class TrainingStatusEventData(TypedDict):
-    """`TrainingStatusEvent` data."""
-
-    code: TrainingStatusCode
-    """Training Status Code."""
-    string: NotRequired[str]
-    """Extended string."""
-
-
-class TrainingStatusEvent(NamedTuple):
-    """Training Status Event."""
-
-    event_id: Literal["training_status"]
-    """Always `training_status`."""
-    event_data: TrainingStatusEventData
-    """`TrainingStatusEvent` data."""
+    training_status: TrainingStatusCode
+    """
+    Training Status.
+    """
+    training_status_string: str
+    """
+    Training Status String.
+    """
 
 
 class UpdateEvent(NamedTuple):
@@ -367,9 +357,7 @@ class ControlEvent(NamedTuple):
     """Reason of event."""
 
 
-FtmsEvents = (
-    UpdateEvent | SetupEvent | ControlEvent | TrainingStatusEvent | SpinDownEvent
-)
+FtmsEvents = UpdateEvent | SetupEvent | ControlEvent | SpinDownEvent
 """Tagged union of FTMS events."""
 
 FtmsCallback = Callable[[FtmsEvents], None]

@@ -30,9 +30,6 @@ class PropertiesManager:
     _settings: SetupEventData
     """Properties dictonary"""
 
-    _training_status: TrainingStatusCode
-    """Last Training Status Code"""
-
     def __init__(self, on_ftms_event: FtmsCallback | None = None) -> None:
         self._cb = on_ftms_event
         self._properties = {}
@@ -49,8 +46,6 @@ class PropertiesManager:
             self._live_properties.update(k for k, v in e.event_data.items() if v)
         elif e.event_id == "setup":
             self._settings |= e.event_data
-        elif e.event_id == "training_status":
-            self._training_status = e.event_data["code"]
 
         return self._cb and self._cb(e)
 
@@ -83,7 +78,7 @@ class PropertiesManager:
 
     @property
     def training_status(self) -> TrainingStatusCode:
-        return self._training_status
+        return self.get_property(c.TRAINING_STATUS)
 
     # REAL-TIME TRAINING DATA
 

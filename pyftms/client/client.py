@@ -95,11 +95,15 @@ class FitnessMachine(ABC, PropertiesManager):
         self._data_updater = DataUpdater(self._data_model, self._on_event)
         self._controller = MachineController(self._on_event)
 
-    @classmethod
     def _get_supported_properties(
-        cls, features: MachineFeatures = MachineFeatures(~0)
+        self, features: MachineFeatures = MachineFeatures(~0)
     ) -> tuple[str, ...]:
-        return cls._data_model._get_features(features)
+        properties = self._data_model._get_features(features)
+
+        if self.training_status is not None:
+            properties.append(c.TRAINING_STATUS)
+
+        return tuple(properties)
 
     async def __aenter__(self):
         await self.connect()
@@ -210,7 +214,7 @@ class FitnessMachine(ABC, PropertiesManager):
     @cached_property
     def supported_settings(self) -> tuple[str, ...]:
         """Supported settings."""
-        return ControlModel._get_features(self._m_settings)
+        return tuple(ControlModel._get_features(self._m_settings))
 
     @property
     def supported_ranges(self) -> MappingProxyType[str, SettingRange]:

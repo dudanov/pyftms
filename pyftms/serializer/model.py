@@ -171,7 +171,7 @@ class BaseModel:
         return result
 
     @classmethod
-    def _get_features(cls, features: int) -> tuple[str, ...]:
+    def _get_features(cls, features: int) -> list[str]:
         result = []
 
         def _get_cls_features(cls):
@@ -194,7 +194,7 @@ class BaseModel:
 
         _get_cls_features(cls)
 
-        return tuple(result)
+        return result
 
     def __post_init__(self, *args, **kwargs):
         for field in dc.fields(self):
