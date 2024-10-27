@@ -95,15 +95,11 @@ class FitnessMachine(ABC, PropertiesManager):
         self._data_updater = DataUpdater(self._data_model, self._on_event)
         self._controller = MachineController(self._on_event)
 
+    @classmethod
     def _get_supported_properties(
-        self, features: MachineFeatures = MachineFeatures(~0)
-    ) -> tuple[str, ...]:
-        properties = self._data_model._get_features(features)
-
-        if self.training_status is not None:
-            properties.append(c.TRAINING_STATUS)
-
-        return tuple(properties)
+        cls, features: MachineFeatures = MachineFeatures(~0)
+    ) -> list[str]:
+        return cls._data_model._get_features(features)
 
     async def __aenter__(self):
         await self.connect()
@@ -204,12 +200,17 @@ class FitnessMachine(ABC, PropertiesManager):
         *May contain both meaningless properties and may not contain
         some properties that are supported by the machine.*
         """
-        return self._get_supported_properties(self._m_features)
+        x = self._get_supported_properties(self._m_features)
+        if self.training_status is not None:
+            x.append(c.TRAINING_STATUS)
+        return tuple(x)
 
     @cached_property
     def available_properties(self) -> tuple[str, ...]:
         """All properties that *MAY BE* supported by this machine type."""
-        return self._get_supported_properties()
+        x = self._get_supported_properties()
+        x.append(c.TRAINING_STATUS)
+        return tuple(x)
 
     @cached_property
     def supported_settings(self) -> tuple[str, ...]:
