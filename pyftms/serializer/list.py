@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import io
-from typing import Generic, Iterator, override
+from typing import Iterator, override
 
-from .serializer import Serializer, T
+from .serializer import Serializer
 
 
-class ListSerializer(Generic[T], Serializer[Iterator[T]]):
+class ListSerializer[T](Serializer[Iterator[T]]):
     def __init__(self, serializer: Serializer[T], n: int) -> None:
         assert n > 0
         self._serializer = serializer

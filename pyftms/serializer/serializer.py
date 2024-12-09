@@ -3,12 +3,9 @@
 
 import io
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
-
-T = TypeVar("T")
 
 
-class Serializer(ABC, Generic[T]):
+class Serializer[T](ABC):
     def deserialize(self, src: io.IOBase | bytes) -> T:
         if not isinstance(src, io.IOBase):
             src = io.BytesIO(src)

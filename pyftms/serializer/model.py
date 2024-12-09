@@ -7,7 +7,6 @@ from types import GenericAlias, MappingProxyType, UnionType
 from typing import (
     Any,
     ClassVar,
-    Generic,
     Iterator,
     Optional,
     Self,
@@ -213,21 +212,19 @@ class BaseModel:
 
 # MODEL SERIALIZER
 
-BaseModelT = TypeVar("BaseModelT", bound="BaseModel")
 
-
-class ModelSerializer(Generic[BaseModelT], Serializer[BaseModelT]):
+class ModelSerializer[T: BaseModel](Serializer[T]):
     """Model Serializer"""
 
-    def __init__(self, cls: type[BaseModelT]) -> None:
+    def __init__(self, cls: type[T]) -> None:
         self._cls = cls
 
     @override
-    def _deserialize(self, src: io.IOBase) -> BaseModelT:
+    def _deserialize(self, src: io.IOBase) -> T:
         return self._cls._deserialize(src)
 
     @override
-    def serialize(self, writer: io.IOBase, value: BaseModelT) -> int:
+    def serialize(self, writer: io.IOBase, value: T) -> int:
         return value._serialize(writer)
 
     @override
@@ -246,9 +243,9 @@ def get_serializer(arg: str, num: None = None) -> NumSerializer: ...
 
 
 @overload
-def get_serializer(
-    arg: type[BaseModelT], num: None = None
-) -> ModelSerializer[BaseModelT]: ...
+def get_serializer[T: BaseModel](
+    arg: type[T], num: None = None
+) -> ModelSerializer[T]: ...
 
 
 @overload
@@ -256,12 +253,12 @@ def get_serializer(arg: str, num: int) -> ListSerializer[NumSerializer]: ...
 
 
 @overload
-def get_serializer(
-    arg: type[BaseModelT], num: int
-) -> ListSerializer[ModelSerializer[BaseModelT]]: ...
+def get_serializer[T: BaseModel](
+    arg: type[T], num: int
+) -> ListSerializer[ModelSerializer[T]]: ...
 
 
-def get_serializer(arg: str | type[BaseModel], num: int | None = None):
+def get_serializer[T: BaseModel](arg: str | type[T], num: int | None = None):
     if (serializer := _registry.get(arg)) is None:
         if isinstance(arg, str):
             serializer = NumSerializer(arg)
