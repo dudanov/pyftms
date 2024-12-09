@@ -106,7 +106,11 @@ async def discover_ftms_devices(
                     devices.add(dev.address)
 
                     _LOGGER.debug(
-                        f" #{len(devices)} - {machine_type.name}: address='{dev.address}', name='{dev.name}'."
+                        " #%d - %s: address='%s', name='%s'",
+                        len(devices),
+                        machine_type.name,
+                        dev.address,
+                        dev.name,
                     )
 
                     yield dev, machine_type

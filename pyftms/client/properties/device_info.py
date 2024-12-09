@@ -48,6 +48,6 @@ async def read_device_info(cli: BleakClient) -> DeviceInfo:
                 data = await cli.read_gatt_char(c)
                 result[k] = data.decode()
 
-    _LOGGER.debug(f"Device Info: {result}.")
+    _LOGGER.debug("Device Info: %s", result)
 
     return result

@@ -156,8 +156,8 @@ async def read_features(cli: BleakClient) -> tuple[MachineFeatures, MachineSetti
         _LOGGER.exception("Failed reading machine features and settings.")
         raise
 
-    _LOGGER.debug(f"Features: {", ".join(x.name for x in features)}")
-    _LOGGER.debug(f"Settings: {", ".join(x.name for x in settings)}")
+    _LOGGER.debug("Features: %s", features)
+    _LOGGER.debug("Settings: %s", settings)
 
     return features, settings
 
@@ -198,6 +198,6 @@ async def read_supported_ranges(
     if MachineSettings.HEART_RATE in settings:
         result[TARGET_HEART_RATE] = await _range(cli, HEART_RATE_RANGE_UUID, "u1")
 
-    _LOGGER.debug(f"Settings ranges: {result}")
+    _LOGGER.debug("Settings ranges: %s", result)
 
     return MappingProxyType(result)

@@ -59,7 +59,7 @@ class NotFitnessMachineError(Exception):
         msg = "No service data"
 
         if adv_data is not None:
-            msg = f"AD service data: '{adv_data.hex(" ")}'"
+            msg = f"AD service data: {adv_data.hex(" ").upper()}"
 
         super().__init__(f"Device is not Fitness Machine. {msg}.")
 
