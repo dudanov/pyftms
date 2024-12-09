@@ -1,5 +1,6 @@
 # Copyright 2024, Sergey Dudanov
 # SPDX-License-Identifier: Apache-2.0
+from __future__ import annotations
 
 import logging
 from abc import ABC
@@ -41,7 +42,7 @@ from .properties import (
 
 _LOGGER = logging.getLogger(__name__)
 
-type DisconnectCallback = Callable[["FitnessMachine"], None]
+type DisconnectCallback = Callable[[FitnessMachine], None]
 
 
 class FitnessMachine(ABC, PropertiesManager):
