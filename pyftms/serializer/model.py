@@ -66,6 +66,14 @@ def _get_model_field_serializer(field: dc.Field):
             raise TypeError("'TypeVar' must have bound type.")
 
     def _get_serializer(type_) -> Serializer:
+        if isinstance(type_, GenericAlias):
+            if (num := meta.get("num")) is None:
+                raise TypeError("Number of elements is required.")
+
+            serializer = _get_serializer(get_args(type_)[0])
+
+            return ListSerializer(serializer, num)
+
         if issubclass(type_, (int, float)):
             if fmt := meta.get("format"):
                 return get_serializer(fmt)
@@ -74,14 +82,6 @@ def _get_model_field_serializer(field: dc.Field):
 
         if issubclass(type_, BaseModel):
             return get_serializer(type_)
-
-        if isinstance(type_, GenericAlias):
-            if (num := meta.get("num")) is None:
-                raise TypeError("Number of elements is required.")
-
-            serializer = _get_serializer(get_args(type_)[0])
-
-            return ListSerializer(serializer, num)
 
         raise TypeError("Unsupported type.")
 

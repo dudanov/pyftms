@@ -4,7 +4,7 @@
 import dataclasses as dc
 import io
 from enum import STRICT, IntEnum, auto
-from typing import Any, Generic, TypeVar, cast, override
+from typing import Any, cast, override
 
 from ..serializer import BaseModel, ModelMeta, model_meta
 
@@ -75,11 +75,8 @@ class IndoorBikeSimulationParameters(BaseModel):
     """
 
 
-T = TypeVar("T", bound=int)
-
-
 @dc.dataclass(frozen=True)
-class CodeSwitchModel(Generic[T], BaseModel):
+class CodeSwitchModel[T: int](BaseModel):
     """Base model based on a code attribute and associated parameter attributes."""
 
     code: T | None = dc.field(

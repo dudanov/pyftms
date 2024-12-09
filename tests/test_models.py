@@ -1,6 +1,6 @@
 import pytest
 
-from pyftms.models import TreadmillData
+from pyftms.models import MachineStatusModel, TreadmillData
 from pyftms.serializer import BaseModel, ModelSerializer, get_serializer
 
 
@@ -30,6 +30,11 @@ from pyftms.serializer import BaseModel, ModelSerializer, get_serializer
                 "energy_per_hour": 0,
                 "energy_per_minute": 0,
             },
+        ),
+        (
+            MachineStatusModel,
+            b"\x05\x69\x00",
+            {"code": 5, "target_speed": 1.05},
         ),
     ],
 )
