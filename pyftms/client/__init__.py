@@ -40,6 +40,7 @@ def get_client(
     adv_or_type: AdvertisementData | MachineType,
     *,
     timeout: float = 2,
+    ble_adapter: str = "hci0",
     on_ftms_event: FtmsCallback | None = None,
     on_disconnect: DisconnectCallback | None = None,
 ) -> FitnessMachine:
@@ -70,6 +71,7 @@ def get_client(
         ble_device,
         adv_data,
         timeout=timeout,
+        ble_adapter=ble_adapter,
         on_ftms_event=on_ftms_event,
         on_disconnect=on_disconnect,
     )
@@ -77,6 +79,7 @@ def get_client(
 
 async def discover_ftms_devices(
     discover_time: float = 10,
+    ble_adapter: str = "hci0",
 ) -> AsyncIterator[tuple[BLEDevice, MachineType]]:
     """
     Discover FTMS devices.
@@ -90,7 +93,7 @@ async def discover_ftms_devices(
 
     devices: set[str] = set()
 
-    async with BleakScanner() as scanner:
+    async with BleakScanner(adapter=ble_adapter) as scanner:
         try:
             async with asyncio.timeout(discover_time):
                 async for dev, adv in scanner.advertisement_data():
@@ -123,6 +126,7 @@ async def get_client_from_address(
     address: str,
     *,
     scan_timeout: float = 10,
+    ble_adapter: str = "hci0",
     timeout: float = 2,
     on_ftms_event: FtmsCallback | None = None,
     on_disconnect: DisconnectCallback | None = None,
@@ -141,7 +145,7 @@ async def get_client_from_address(
     - `FitnessMachine` instance if device found successfully.
     """
 
-    async for dev, machine_type in discover_ftms_devices(scan_timeout):
+    async for dev, machine_type in discover_ftms_devices(scan_timeout, ble_adapter):
         if dev.address.lower() == address.lower():
             return get_client(
                 dev,

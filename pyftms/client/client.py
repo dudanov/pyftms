@@ -81,6 +81,7 @@ class FitnessMachine(ABC, PropertiesManager):
         adv_data: AdvertisementData | None = None,
         *,
         timeout: float = 2.0,
+        ble_adapter: str = "hci0",
         on_ftms_event: FtmsCallback | None = None,
         on_disconnect: DisconnectCallback | None = None,
     ) -> None:
