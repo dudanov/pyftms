@@ -20,7 +20,7 @@ pdoc = "*"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.2"
 tox = "^4.16.0"
-ruff = ">=0.5.2,<0.9.0"
+ruff = ">=0.5.2,<0.10.0"
 black = "^24.4.2"
 isort = "^5.13.2"
 pytest-md = "^0.2.0"
