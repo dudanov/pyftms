@@ -2,11 +2,11 @@ import io
 
 import pytest
 
-from pyftms.serializer import NumSerializer, SupportedNumbers, get_serializer
+from pyftms.serializer import FtmsNumbers, NumSerializer, get_serializer
 
 
 @pytest.mark.parametrize(
-    "fmt,num,buf",
+    "format,number,result",
     [
         ("u1", 128, b"\x80"),
         ("u2", 128, b"\x80\x00"),
@@ -26,14 +26,14 @@ from pyftms.serializer import NumSerializer, SupportedNumbers, get_serializer
         ("s2.1", None, b"\xff\x7f"),
     ],
 )
-def test_num_serializer(fmt: str, num: SupportedNumbers, buf: bytes):
-    s = get_serializer(fmt)
+def test_num_serializer(format: str, number: FtmsNumbers, result: bytes):
+    serializer = get_serializer(format)
 
-    assert isinstance(s, NumSerializer)
-    assert s.deserialize(buf) == num
+    assert isinstance(serializer, NumSerializer)
+    assert serializer.deserialize(result) == number
 
     bio = io.BytesIO()
 
-    sz = s.serialize(bio, num)
-    assert sz == s.get_size() and sz == len(buf)
-    assert bio.getvalue() == buf
+    size = serializer.serialize(bio, number)
+    assert size == serializer.get_size() and size == len(result)
+    assert bio.getvalue() == result
