@@ -6,7 +6,7 @@ from enum import Flag, auto
 
 from bleak.backends.scanner import AdvertisementData
 
-from ..const import FITNESS_MACHINE_SERVICE_UUID
+from ..const import SERVICE_UUID
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -75,7 +75,7 @@ def get_machine_type_from_service_data(adv_data: AdvertisementData) -> MachineTy
     - `MachineType` - type of fitness machine.
     """
 
-    data = adv_data.service_data.get(FITNESS_MACHINE_SERVICE_UUID)
+    data = adv_data.service_data.get(SERVICE_UUID)
 
     if data is None or len(data) != 3:
         raise NotFitnessMachineError(data)
