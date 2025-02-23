@@ -1,4 +1,4 @@
-# Copyright 2024, Sergey Dudanov
+# Copyright 2024-2025, Sergey Dudanov
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
@@ -20,24 +20,24 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class DeviceInfo(TypedDict, total=False):
-    """Device Information."""
+    """Device Information"""
 
     manufacturer: str
-    """Manufacturer."""
+    """Manufacturer"""
     model: str
-    """Model."""
+    """Model"""
     serial_number: str
-    """Serial Number."""
+    """Serial Number"""
     sw_version: str
-    """Software Version."""
+    """Software Version"""
     hw_version: str
-    """Hardware Version."""
+    """Hardware Version"""
 
 
 async def read_device_info(cli: BleakClient) -> DeviceInfo:
     """Read Device Information"""
 
-    _LOGGER.debug("Reading Device Information.")
+    _LOGGER.debug("Reading Device Information...")
 
     result = DeviceInfo()
 
