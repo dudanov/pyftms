@@ -1,4 +1,4 @@
-# Copyright 2024, Sergey Dudanov
+# Copyright 2024-2025, Sergey Dudanov
 # SPDX-License-Identifier: Apache-2.0
 
 # REAL-TIME TRAINING DATA
@@ -75,98 +75,111 @@ TARGET_TIME_TIME_THREE_ZONES = "target_time_three_zones"
 TARGET_TIME_TIME_FIVE_ZONES = "target_time_five_zones"
 WHEEL_CIRCUMFERENCE = "wheel_circumference"
 
-# BLE UUIDS
+# Bluetooth FTMS UUIDs
 
 FITNESS_MACHINE_SERVICE_UUID = "00001826-0000-1000-8000-00805f9b34fb"
 """Fitness Machine Service"""
 
-FITNESS_MACHINE_FEATURE_UUID = "00002acc-0000-1000-8000-00805f9b34fb"
+FITNESS_MACHINE_FEATURE_UUID = "2acc"
 """
-`Property:` Read
-`Device Type:` Treadmill, walking pad, elliptical machine, rower, and smart bike.
-`Description:` Describes the capabilities supported by the device.
-"""
-
-TREADMILL_DATA_UUID = "00002acd-0000-1000-8000-00805f9b34fb"
-"""
-`Property:` Notify
-`Device Type:` Treadmill and walking pad only.
-`Description:` Reports real-time workout data.
+`Requirement`: Mandatory.
+`Property`: Read.
+`Device Type`: Treadmill, walking pad, elliptical machine, rower, and smart bike.
+`Description`: Describes the capabilities supported by the device.
 """
 
-CROSS_TRAINER_DATA_UUID = "00002ace-0000-1000-8000-00805f9b34fb"
+TREADMILL_DATA_UUID = "2acd"
 """
-`Property:` Notify
-`Device Type:` Elliptical machines only.
-`Description:` Reports real-time workout data.
-"""
-
-ROWER_DATA_UUID = "00002ad1-0000-1000-8000-00805f9b34fb"
-"""
-`Property:` Notify
-`Device Type:` Rower only.
-`Description:` Reports real-time workout data.
+`Requirement`: Optional.
+`Property`: Notify.
+`Device Type`: Treadmill and walking pad only.
+`Description`: Reports real-time workout data.
 """
 
-INDOOR_BIKE_DATA_UUID = "00002ad2-0000-1000-8000-00805f9b34fb"
+CROSS_TRAINER_DATA_UUID = "2ace"
 """
-`Property:` Notify
-`Device Type:` Smart bike only.
-`Description:` Reports real-time workout data.
-"""
-
-TRAINING_STATUS_UUID = "00002ad3-0000-1000-8000-00805f9b34fb"
-"""
-`Property:` Read/Notify
-`Device Type:` Treadmill, walking pad, elliptical machine, rower, and smart bike.
-`Description:` Reports the device status data.
+`Requirement`: Optional.
+`Property`: Notify.
+`Device Type`: Elliptical machines only.
+`Description`: Reports real-time workout data.
 """
 
-SPEED_RANGE_UUID = "00002ad4-0000-1000-8000-00805f9b34fb"
+ROWER_DATA_UUID = "2ad1"
 """
-`Property:` Read
-`Device Type:` Treadmill, walking pad, and smart bike.
-`Description:` Reports the supported speed range.
-"""
-
-INCLINATION_RANGE_UUID = "00002ad5-0000-1000-8000-00805f9b34fb"
-"""
-`Property:` Read
-`Device Type:` Treadmill and walking pad.
-`Description:` Reports the supported inclination range.
+`Requirement`: Optional.
+`Property`: Notify.
+`Device Type`: Rower only.
+`Description`: Reports real-time workout data.
 """
 
-RESISTANCE_LEVEL_RANGE_UUID = "00002ad6-0000-1000-8000-00805f9b34fb"
+INDOOR_BIKE_DATA_UUID = "2ad2"
 """
-`Property:` Read
-`Device Type:` Elliptical machine.
-`Description:` Reports the supported resistance level range.
-"""
-
-POWER_RANGE_UUID = "00002ad8-0000-1000-8000-00805f9b34fb"
-"""
-`Property:` Read
-`Device Type:` Elliptical machine, rower, and smart bike.
-`Description:` Reports the supported power range.
+`Requirement`: Optional.
+`Property`: Notify.
+`Device Type`: Smart bike only.
+`Description`: Reports real-time workout data.
 """
 
-HEART_RATE_RANGE_UUID = "00002ad7-0000-1000-8000-00805f9b34fb"
+TRAINING_STATUS_UUID = "2ad3"
 """
-`Property:` Read
-`Device Type:` Treadmill, walking pad, elliptical machine, rower, and smart bike.
-`Description:` Reports supported heart rate range.
-"""
-
-FITNESS_MACHINE_CONTROL_POINT_UUID = "00002ad9-0000-1000-8000-00805f9b34fb"
-"""
-`Property:` Write/Indicate
-`Device Type:` Optional support for treadmills and walking pads, and mandatory for elliptical machines, rowers, and smart bikes.
-`Description:` Controls the status (paused or resumed) of fitness machine.
+`Requirement`: Optional.
+`Property`: Read/Notify.
+`Device Type`: Treadmill, walking pad, elliptical machine, rower, and smart bike.
+`Description`: Reports the device status data.
 """
 
-FITNESS_MACHINE_STATUS_UUID = "00002ada-0000-1000-8000-00805f9b34fb"
+SPEED_RANGE_UUID = "2ad4"
 """
-`Property:` Notify
-`Device Type:` Treadmill, walking pad, elliptical machine, rower, and smart bike.
-`Description:` Reports workout status changes of the fitness machine.
+`Requirement`: Mandatory if the `Speed Target Setting` feature is supported; otherwise Optional.
+`Property`: Read.
+`Device Type`: Treadmill, walking pad, and smart bike.
+`Description`: Reports the supported speed range.
+"""
+
+INCLINATION_RANGE_UUID = "2ad5"
+"""
+`Requirement`: Mandatory if the `Inclination Target Setting` feature is supported; otherwise Optional.
+`Property`: Read.
+`Device Type`: Treadmill and walking pad.
+`Description`: Reports the supported inclination range.
+"""
+
+RESISTANCE_LEVEL_RANGE_UUID = "2ad6"
+"""
+`Requirement`: Mandatory if the `Resistance Target Setting` feature is supported; otherwise Optional.
+`Property`: Read.
+`Device Type`: Elliptical machine.
+`Description`: Reports the supported resistance level range.
+"""
+
+HEART_RATE_RANGE_UUID = "2ad7"
+"""
+`Requirement`: Mandatory if the `Heart Rate Target Setting` feature is supported; otherwise Optional.
+`Property`: Read.
+`Device Type`: Treadmill, walking pad, elliptical machine, rower, and smart bike.
+`Description`: Reports supported heart rate range.
+"""
+
+POWER_RANGE_UUID = "2ad8"
+"""
+`Requirement`: Mandatory if the `Power Target Setting` feature is supported; otherwise Optional.
+`Property`: Read.
+`Device Type`: Elliptical machine, rower, and smart bike.
+`Description`: Reports the supported power range.
+"""
+
+CONTROL_POINT_UUID = "2ad9"
+"""
+`Requirement`: Optional.
+`Property`: Write/Indicate.
+`Device Type`: Optional support for treadmills and walking pads, and mandatory for elliptical machines, rowers, and smart bikes.
+`Description`: Controls the status (paused or resumed) of fitness machine.
+"""
+
+STATUS_UUID = "2ada"
+"""
+`Requirement`: Mandatory if the `Fitness Machine Control Point` is supported; otherwise Optional.
+`Property`: Notify.
+`Device Type`: Treadmill, walking pad, elliptical machine, rower, and smart bike.
+`Description`: Reports workout status changes of the fitness machine.
 """
