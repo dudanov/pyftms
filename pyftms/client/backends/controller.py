@@ -23,13 +23,7 @@ from ...models import (
     TrainingStatusFlags,
     TrainingStatusModel,
 )
-from ..const import (
-    CONTROL_POINT_UUID,
-    STATUS_UUID,
-    PAUSE,
-    STOP,
-    TRAINING_STATUS_UUID,
-)
+from ..const import CONTROL_POINT_UUID, PAUSE, STATUS_UUID, STOP, TRAINING_STATUS_UUID
 from .event import (
     ControlEvent,
     FtmsCallback,

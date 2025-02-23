@@ -80,7 +80,7 @@ WHEEL_CIRCUMFERENCE = "wheel_circumference"
 FITNESS_MACHINE_SERVICE_UUID = "00001826-0000-1000-8000-00805f9b34fb"
 """Fitness Machine Service"""
 
-FITNESS_MACHINE_FEATURE_UUID = "2acc"
+FEATURE_UUID = "2acc"
 """
 `Requirement`: Mandatory.
 `Property`: Read.
