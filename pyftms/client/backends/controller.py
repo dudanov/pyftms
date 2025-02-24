@@ -23,13 +23,7 @@ from ...models import (
     TrainingStatusFlags,
     TrainingStatusModel,
 )
-from ..const import (
-    FITNESS_MACHINE_CONTROL_POINT_UUID,
-    FITNESS_MACHINE_STATUS_UUID,
-    PAUSE,
-    STOP,
-    TRAINING_STATUS_UUID,
-)
+from ..const import CONTROL_POINT_UUID, PAUSE, STATUS_UUID, STOP, TRAINING_STATUS_UUID
 from .event import (
     ControlEvent,
     FtmsCallback,
@@ -109,10 +103,10 @@ class MachineController:
             self._on_training_status(c, await cli.read_gatt_char(c))
             await cli.start_notify(c, self._on_training_status)
 
-        if c := cli.services.get_characteristic(FITNESS_MACHINE_STATUS_UUID):
+        if c := cli.services.get_characteristic(STATUS_UUID):
             await cli.start_notify(c, self._on_machine_status)
 
-        if c := cli.services.get_characteristic(FITNESS_MACHINE_CONTROL_POINT_UUID):
+        if c := cli.services.get_characteristic(CONTROL_POINT_UUID):
             await cli.start_notify(c, self._on_indicate)
 
         self._subscribed = True
@@ -158,7 +152,7 @@ class MachineController:
             _, resp = await asyncio.wait_for(
                 asyncio.gather(
                     cli.write_gatt_char(
-                        FITNESS_MACHINE_CONTROL_POINT_UUID,
+                        CONTROL_POINT_UUID,
                         bio.getvalue(),
                         True,
                     ),

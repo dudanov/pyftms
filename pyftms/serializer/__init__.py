@@ -3,17 +3,17 @@
 
 from .list import ListSerializer
 from .model import BaseModel, ModelMeta, ModelSerializer, get_serializer, model_meta
-from .num import NumSerializer, SupportedNumbers
+from .num import FtmsNumbers, NumSerializer
 from .serializer import Serializer
 
 __all__ = [
-    "model_meta",
     "BaseModel",
+    "FtmsNumbers",
     "get_serializer",
-    "NumSerializer",
-    "SupportedNumbers",
     "ListSerializer",
+    "model_meta",
     "ModelMeta",
     "ModelSerializer",
+    "NumSerializer",
     "Serializer",
 ]

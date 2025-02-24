@@ -1,5 +1,6 @@
-# Copyright 2024, Sergey Dudanov
+# Copyright 2024-2025, Sergey Dudanov
 # SPDX-License-Identifier: Apache-2.0
+
 from __future__ import annotations
 
 import logging
@@ -11,11 +12,7 @@ from typing import Any, Callable, ClassVar
 from bleak import BleakClient
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
-from bleak_retry_connector import (
-    BleakClientWithServiceCache,
-    close_stale_connections,
-    establish_connection,
-)
+from bleak_retry_connector import close_stale_connections, establish_connection
 
 from ..models import (
     ControlCode,
@@ -39,6 +36,7 @@ from .properties import (
     read_features,
     read_supported_ranges,
 )
+from .properties.device_info import DIS_UUID
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,18 +59,18 @@ class FitnessMachine(ABC, PropertiesManager):
     _data_uuid: ClassVar[str]
     """Notify UUID of real-time training data."""
 
-    _cli: BleakClientWithServiceCache | None = None
+    _cli: BleakClient
 
-    _data_updater: DataUpdater
+    _updater: DataUpdater
 
-    _ble_device: BLEDevice
+    _device: BLEDevice
     _need_connect: bool
 
     # Static device info
 
     _device_info: DeviceInfo
-    _m_features: MachineFeatures
-    _m_settings: MachineSettings
+    _features: MachineFeatures
+    _settings: MachineSettings
     _settings_ranges: MappingProxyType[str, SettingRange]
 
     def __init__(
@@ -93,7 +91,7 @@ class FitnessMachine(ABC, PropertiesManager):
         self.set_ble_device_and_advertisement_data(ble_device, adv_data)
 
         # Updaters
-        self._data_updater = DataUpdater(self._data_model, self._on_event)
+        self._updater = DataUpdater(self._data_model, self._on_event)
         self._controller = MachineController(self._on_event)
 
     @classmethod
@@ -114,7 +112,7 @@ class FitnessMachine(ABC, PropertiesManager):
     def set_ble_device_and_advertisement_data(
         self, ble_device: BLEDevice, adv_data: AdvertisementData | None
     ):
-        self._ble_device = ble_device
+        self._device = ble_device
 
         if adv_data:
             self._properties["rssi"] = adv_data.rssi
@@ -139,8 +137,9 @@ class FitnessMachine(ABC, PropertiesManager):
 
     @property
     def name(self) -> str:
-        """Device name or BLE address."""
-        return self._ble_device.name or self._ble_device.address
+        """Device name or BLE address"""
+
+        return self._device.name or self._device.address
 
     def set_disconnect_callback(self, cb: DisconnectCallback):
         """Set disconnect callback."""
@@ -165,20 +164,19 @@ class FitnessMachine(ABC, PropertiesManager):
         self._need_connect = False
 
         if self.is_connected:
-            assert self._cli
             await self._cli.disconnect()
 
     @property
     def address(self) -> str:
         """Bluetooth address."""
 
-        return self._ble_device.address
+        return self._device.address
 
     @property
     def is_connected(self) -> bool:
         """Current connection status."""
 
-        return self._cli is not None and self._cli.is_connected
+        return hasattr(self, "_cli") and self._cli.is_connected
 
     # COMMON BASE PROPERTIES
 
@@ -201,7 +199,7 @@ class FitnessMachine(ABC, PropertiesManager):
         *May contain both meaningless properties and may not contain
         some properties that are supported by the machine.*
         """
-        x = self._get_supported_properties(self._m_features)
+        x = self._get_supported_properties(self._features)
         if self.training_status is not None:
             x.append(c.TRAINING_STATUS)
         return tuple(x)
@@ -216,7 +214,7 @@ class FitnessMachine(ABC, PropertiesManager):
     @cached_property
     def supported_settings(self) -> tuple[str, ...]:
         """Supported settings."""
-        return tuple(ControlModel._get_features(self._m_settings))
+        return tuple(ControlModel._get_features(self._settings))
 
     @property
     def supported_ranges(self) -> MappingProxyType[str, SettingRange]:
@@ -224,20 +222,30 @@ class FitnessMachine(ABC, PropertiesManager):
         return self._settings_ranges
 
     async def _connect(self) -> None:
-        """Initialize connection and read necessary data from device."""
-
         if not self._need_connect or self.is_connected:
             return
 
+        def _on_disconnect(cli: BleakClient) -> None:
+            _LOGGER.debug("Client disconnected. Reset updaters states.")
+
+            del self._cli
+            self._updater.reset()
+            self._controller.reset()
+
+            if self._disconnect_cb:
+                self._disconnect_cb(self)
+
+        await close_stale_connections(self._device)
+
         _LOGGER.debug("Initialization. Trying to establish connection.")
 
-        await close_stale_connections(self._ble_device)
-
         self._cli = await establish_connection(
-            BleakClientWithServiceCache,
-            self._ble_device,
-            self.name,
-            disconnected_callback=self._on_disconnect,
+            client_class=BleakClient,
+            device=self._device,
+            name=self.name,
+            disconnected_callback=_on_disconnect,
+            # we needed only two services: `Fitness Machine Service` and `Device Information Service`
+            services=[c.FTMS_UUID, DIS_UUID],
         )
 
         _LOGGER.debug("Connection success.")
@@ -248,34 +256,23 @@ class FitnessMachine(ABC, PropertiesManager):
             self._device_info = await read_device_info(self._cli)
 
         if not hasattr(self, "_features"):
-            self._m_features, self._m_settings = await read_features(self._cli)
+            self._features, self._settings = await read_features(
+                self._cli, self._machine_type
+            )
 
         if not hasattr(self, "_settings_ranges"):
             self._settings_ranges = await read_supported_ranges(
-                self._cli, self._m_settings
+                self._cli, self._settings
             )
 
         await self._controller.subscribe(self._cli)
-        await self._data_updater.subscribe(self._cli, self._data_uuid)
-
-    def _on_disconnect(self, cli: BleakClient) -> None:
-        """BLE disconnect handler."""
-
-        _LOGGER.debug("Client disconnected. Reset updaters states.")
-
-        self._cli = None
-        self._data_updater.reset()
-        self._controller.reset()
-
-        if self._disconnect_cb:
-            self._disconnect_cb(self)
+        await self._updater.subscribe(self._cli, self._data_uuid)
 
     # COMMANDS
 
     async def _write_command(self, code: ControlCode | None = None, *args, **kwargs):
         if self._need_connect:
             await self._connect()
-            assert self._cli
             return await self._controller.write_command(
                 self._cli, code, timeout=self._timeout, **kwargs
             )
