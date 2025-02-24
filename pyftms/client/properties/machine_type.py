@@ -1,4 +1,4 @@
-# Copyright 2024, Sergey Dudanov
+# Copyright 2024-2025, Sergey Dudanov
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
@@ -7,6 +7,7 @@ from enum import Flag, auto
 from bleak.backends.scanner import AdvertisementData
 
 from ..const import SERVICE_UUID
+from ..errors import NotFitnessMachineError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,23 +46,6 @@ class MachineType(Flag):
     """Rower Machine."""
     INDOOR_BIKE = auto()
     """Indoor Bike Machine."""
-
-
-class NotFitnessMachineError(Exception):
-    """
-    An exception if the FTMS service is not supported by the Bluetooth device.
-
-    May be raised in `get_machine_type_from_service_data` and `get_client`
-    functions if advertisement data was passed as an argument.
-    """
-
-    def __init__(self, adv_data: bytes | None) -> None:
-        msg = "No service data"
-
-        if adv_data is not None:
-            msg = f"AD service data: {adv_data.hex(" ").upper()}"
-
-        super().__init__(f"Device is not Fitness Machine. {msg}.")
 
 
 def get_machine_type_from_service_data(adv_data: AdvertisementData) -> MachineType:

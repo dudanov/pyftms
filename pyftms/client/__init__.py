@@ -21,13 +21,13 @@ from .backends import (
     UpdateEventData,
 )
 from .client import DisconnectCallback, FitnessMachine
+from .errors import NotFitnessMachineError
 from .machines import get_machine
 from .manager import PropertiesManager
 from .properties import (
     DeviceInfo,
     MachineType,
     MovementDirection,
-    NotFitnessMachineError,
     SettingRange,
     get_machine_type_from_service_data,
 )
