@@ -1,15 +1,12 @@
 # Copyright 2024-2025, Sergey Dudanov
 # SPDX-License-Identifier: Apache-2.0
 
-import logging
 from enum import Flag, auto
 
 from bleak.backends.scanner import AdvertisementData
 
 from ..const import SERVICE_UUID
 from ..errors import NotFitnessMachineError
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class MachineFlags(Flag):
