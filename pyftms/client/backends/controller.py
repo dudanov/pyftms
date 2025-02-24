@@ -1,4 +1,4 @@
-# Copyright 2024, Sergey Dudanov
+# Copyright 2024-2025, Sergey Dudanov
 # SPDX-License-Identifier: Apache-2.0
 
 import asyncio
@@ -8,7 +8,6 @@ from typing import cast
 
 from bleak import BleakClient
 from bleak.backends.characteristic import BleakGATTCharacteristic
-from bleak.exc import BleakError
 
 from ...models import (
     CodeSwitchModel,
@@ -88,11 +87,13 @@ def _simple_control_events(m: ControlModel) -> ControlEvent | None:
 
 
 class MachineController:
+    _indicate: asyncio.Future[bytes]
+
     def __init__(self, callback: FtmsCallback) -> None:
-        self._indicate: asyncio.Future[bytes]
         self._subscribed = False
         self._auth = False
         self._cb = callback
+        self._write_lock = asyncio.Lock()
 
     async def subscribe(self, cli: BleakClient) -> None:
         """Subscribe for available notifications."""
@@ -146,9 +147,9 @@ class MachineController:
         # Write to control point
 
         await self.subscribe(cli)
-        self._indicate = asyncio.Future()
 
-        try:
+        async with self._write_lock:
+            self._indicate = asyncio.Future()
             _, resp = await asyncio.wait_for(
                 asyncio.gather(
                     cli.write_gatt_char(
@@ -160,9 +161,6 @@ class MachineController:
                 ),
                 timeout=timeout,
             )
-        except BleakError:
-            self.reset()
-            raise
 
         bio = io.BytesIO(resp)
 
