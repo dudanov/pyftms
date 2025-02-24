@@ -1,6 +1,8 @@
 # Copyright 2024-2025, Sergey Dudanov
 # SPDX-License-Identifier: Apache-2.0
 
+import functools
+import operator
 from enum import Flag, auto
 
 from bleak.backends.scanner import AdvertisementData
@@ -58,14 +60,15 @@ def get_machine_type_from_service_data(adv_data: AdvertisementData) -> MachineTy
 
     data = adv_data.service_data.get(normalize_uuid_str(FTMS_UUID))
 
-    if data is None or len(data) != 3:
+    if data is None or not (2 <= len(data) <= 3):
         raise NotFitnessMachineError(data)
 
     # Reading mandatory `Flags` and `Machine Type`.
-    # Machine Type bytes may be reversed on some
-    # machines (it's bug), so I logically ORed them.
+    # `Machine Type` bytes may be reversed on some machines or be a just one
+    # byte (it's bug), so I logically ORed them.
     try:
-        mf, mt = MachineFlags(data[0]), MachineType(data[1] | data[2])
+        mt = functools.reduce(operator.or_, data[1:])
+        mf, mt = MachineFlags(data[0]), MachineType(mt)
 
     except ValueError:
         raise NotFitnessMachineError(data)
