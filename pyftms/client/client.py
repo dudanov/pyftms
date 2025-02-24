@@ -69,8 +69,8 @@ class FitnessMachine(ABC, PropertiesManager):
     # Static device info
 
     _device_info: DeviceInfo
-    _features: MachineFeatures
-    _settings: MachineSettings
+    _m_features: MachineFeatures
+    _m_settings: MachineSettings
     _settings_ranges: MappingProxyType[str, SettingRange]
 
     def __init__(
@@ -199,7 +199,7 @@ class FitnessMachine(ABC, PropertiesManager):
         *May contain both meaningless properties and may not contain
         some properties that are supported by the machine.*
         """
-        x = self._get_supported_properties(self._features)
+        x = self._get_supported_properties(self._m_features)
         if self.training_status is not None:
             x.append(c.TRAINING_STATUS)
         return tuple(x)
@@ -214,7 +214,7 @@ class FitnessMachine(ABC, PropertiesManager):
     @cached_property
     def supported_settings(self) -> tuple[str, ...]:
         """Supported settings."""
-        return tuple(ControlModel._get_features(self._settings))
+        return tuple(ControlModel._get_features(self._m_settings))
 
     @property
     def supported_ranges(self) -> MappingProxyType[str, SettingRange]:
@@ -256,13 +256,13 @@ class FitnessMachine(ABC, PropertiesManager):
             self._device_info = await read_device_info(self._cli)
 
         if not hasattr(self, "_features"):
-            self._features, self._settings = await read_features(
+            self._m_features, self._m_settings = await read_features(
                 self._cli, self._machine_type
             )
 
         if not hasattr(self, "_settings_ranges"):
             self._settings_ranges = await read_supported_ranges(
-                self._cli, self._settings
+                self._cli, self._m_settings
             )
 
         await self._controller.subscribe(self._cli)
