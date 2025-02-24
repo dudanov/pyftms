@@ -157,6 +157,28 @@ async def read_features(
         _LOGGER.exception("Failed reading machine features and settings.")
         raise
 
+    # Remove settings without ranges UUIDs
+
+    if MachineSettings.SPEED in settings:
+        if cli.services.get_characteristic(SPEED_RANGE_UUID) is None:
+            settings &= ~MachineSettings.SPEED
+
+    if MachineSettings.INCLINE in settings:
+        if cli.services.get_characteristic(INCLINATION_RANGE_UUID) is None:
+            settings &= ~MachineSettings.INCLINE
+
+    if MachineSettings.RESISTANCE in settings:
+        if cli.services.get_characteristic(RESISTANCE_LEVEL_RANGE_UUID) is None:
+            settings &= ~MachineSettings.RESISTANCE
+
+    if MachineSettings.POWER in settings:
+        if cli.services.get_characteristic(POWER_RANGE_UUID) is None:
+            settings &= ~MachineSettings.POWER
+
+    if MachineSettings.HEART_RATE in settings:
+        if cli.services.get_characteristic(HEART_RATE_RANGE_UUID) is None:
+            settings &= ~MachineSettings.HEART_RATE
+
     # Remove untypical settings
 
     if MachineType.TREADMILL in mt:
@@ -166,12 +188,10 @@ async def read_features(
         settings &= ~(MachineSettings.SPEED | MachineSettings.INCLINE)
 
     elif MachineType.INDOOR_BIKE in mt:
-        settings &= ~(MachineSettings.INCLINE | MachineSettings.RESISTANCE)
+        settings &= ~(MachineSettings.SPEED | MachineSettings.INCLINE)
 
     elif MachineType.ROWER in mt:
-        settings &= ~(
-            MachineSettings.SPEED | MachineSettings.INCLINE | MachineSettings.RESISTANCE
-        )
+        settings &= ~(MachineSettings.SPEED | MachineSettings.INCLINE)
 
     _LOGGER.debug("Features: %s", features)
     _LOGGER.debug("Settings: %s", settings)
@@ -187,42 +207,29 @@ async def read_supported_ranges(
 
     _LOGGER.debug("Reading settings value ranges...")
 
-    async def _range(uuid: str, num: str) -> SettingRange | None:
-        if c := cli.services.get_characteristic(uuid):
-            data = await cli.read_gatt_char(c)
+    async def _range(uuid: str, num: str) -> SettingRange:
+        data = await cli.read_gatt_char(uuid)
 
-            bio, serializer = io.BytesIO(data), NumSerializer(num)
-            result = SettingRange(*(serializer.deserialize(bio) or 0 for _ in range(3)))
+        bio, serializer = io.BytesIO(data), NumSerializer(num)
+        result = SettingRange(*(serializer.deserialize(bio) or 0 for _ in range(3)))
 
-            assert not bio.read(1)
-            return result
-
-        _LOGGER.debug("Characteristic '%s' not found.", uuid)
+        assert not bio.read(1)
+        return result
 
     if MachineSettings.SPEED in settings:
-        _LOGGER.debug("Reading speed range...")
-        if x := await _range(SPEED_RANGE_UUID, "u2.01"):
-            result[TARGET_SPEED] = x
+        result[TARGET_SPEED] = await _range(SPEED_RANGE_UUID, "u2.01")
 
     if MachineSettings.INCLINE in settings:
-        _LOGGER.debug("Reading incline range...")
-        if x := await _range(INCLINATION_RANGE_UUID, "s2.1"):
-            result[TARGET_INCLINATION] = x
+        result[TARGET_INCLINATION] = await _range(INCLINATION_RANGE_UUID, "s2.1")
 
     if MachineSettings.RESISTANCE in settings:
-        _LOGGER.debug("Reading resistance range...")
-        if x := await _range(RESISTANCE_LEVEL_RANGE_UUID, "s2.1"):
-            result[TARGET_RESISTANCE] = x
+        result[TARGET_RESISTANCE] = await _range(RESISTANCE_LEVEL_RANGE_UUID, "s2.1")
 
     if MachineSettings.POWER in settings:
-        _LOGGER.debug("Reading power range...")
-        if x := await _range(POWER_RANGE_UUID, "s2"):
-            result[TARGET_POWER] = x
+        result[TARGET_POWER] = await _range(POWER_RANGE_UUID, "s2")
 
     if MachineSettings.HEART_RATE in settings:
-        _LOGGER.debug("Reading heart rate range...")
-        if x := await _range(HEART_RATE_RANGE_UUID, "u1"):
-            result[TARGET_HEART_RATE] = x
+        result[TARGET_HEART_RATE] = await _range(HEART_RATE_RANGE_UUID, "u1")
 
     _LOGGER.debug("Settings ranges: %s", result)
 
