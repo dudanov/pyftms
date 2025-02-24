@@ -46,14 +46,13 @@ class MachineType(Flag):
 
 
 def get_machine_type_from_service_data(adv_data: AdvertisementData) -> MachineType:
-    """
-    Returns `MachineType` from service advertisement data.
+    """Returns fitness machine type from Bluetooth advertisement data.
 
     Parameters:
-    - `adv_data` - Service [advertisement data](https://bleak.readthedocs.io/en/latest/backends/index.html#bleak.backends.scanner.AdvertisementData).
+        adv_data: Bluetooth [advertisement data](https://bleak.readthedocs.io/en/latest/backends/index.html#bleak.backends.scanner.AdvertisementData).
 
-    Return:
-    - `MachineType` - type of fitness machine.
+    Returns:
+        Fitness machine type.
     """
 
     data = adv_data.service_data.get(SERVICE_UUID)
