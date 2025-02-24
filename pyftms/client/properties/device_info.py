@@ -6,7 +6,8 @@ from typing import TypedDict
 
 from bleak import BleakClient
 
-_SERVICE_UUID = "180a"
+DIS_UUID = "180a"
+"""Device Information Service"""
 
 _CHARACTERISTICS_MAP = {
     "manufacturer": "2a29",
@@ -41,7 +42,7 @@ async def read_device_info(cli: BleakClient) -> DeviceInfo:
 
     result = DeviceInfo()
 
-    if srv := cli.services.get_service(_SERVICE_UUID):
+    if srv := cli.services.get_service(DIS_UUID):
         for k, v in _CHARACTERISTICS_MAP.items():
             if c := srv.get_characteristic(v):
                 data = await cli.read_gatt_char(c)

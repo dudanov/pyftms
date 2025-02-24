@@ -14,7 +14,7 @@ class NotFitnessMachineError(FtmsError):
     functions if advertisement data was passed as an argument.
     """
 
-    def __init__(self, data: bytes | None) -> None:
+    def __init__(self, data: bytes | None = None) -> None:
         if data is None:
             reason = "No FTMS service data"
         else:

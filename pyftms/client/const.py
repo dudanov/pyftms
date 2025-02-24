@@ -77,7 +77,7 @@ WHEEL_CIRCUMFERENCE = "wheel_circumference"
 
 # Bluetooth FTMS UUIDs
 
-SERVICE_UUID = "00001826-0000-1000-8000-00805f9b34fb"
+FTMS_UUID = "1826"
 """Fitness Machine Service"""
 
 FEATURE_UUID = "2acc"

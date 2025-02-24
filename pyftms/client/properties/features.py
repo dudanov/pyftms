@@ -1,4 +1,4 @@
-# Copyright 2024, Sergey Dudanov
+# Copyright 2024-2025, Sergey Dudanov
 # SPDX-License-Identifier: Apache-2.0
 
 import io
@@ -23,6 +23,7 @@ from ..const import (
     TARGET_RESISTANCE,
     TARGET_SPEED,
 )
+from .machine_type import MachineType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -137,7 +138,9 @@ class SettingRange(NamedTuple):
     """Step value."""
 
 
-async def read_features(cli: BleakClient) -> tuple[MachineFeatures, MachineSettings]:
+async def read_features(
+    cli: BleakClient, mt: MachineType
+) -> tuple[MachineFeatures, MachineSettings]:
     _LOGGER.debug("Reading features and settings...")
 
     try:
@@ -154,21 +157,26 @@ async def read_features(cli: BleakClient) -> tuple[MachineFeatures, MachineSetti
         _LOGGER.exception("Failed reading machine features and settings.")
         raise
 
+    # Remove untypical settings
+
+    if MachineType.TREADMILL in mt:
+        settings &= ~(MachineSettings.RESISTANCE | MachineSettings.POWER)
+
+    elif MachineType.CROSS_TRAINER in mt:
+        settings &= ~(MachineSettings.SPEED | MachineSettings.INCLINE)
+
+    elif MachineType.INDOOR_BIKE in mt:
+        settings &= ~(MachineSettings.INCLINE | MachineSettings.RESISTANCE)
+
+    elif MachineType.ROWER in mt:
+        settings &= ~(
+            MachineSettings.SPEED | MachineSettings.INCLINE | MachineSettings.RESISTANCE
+        )
+
     _LOGGER.debug("Features: %s", features)
     _LOGGER.debug("Settings: %s", settings)
 
     return features, settings
-
-
-async def _range(cli: BleakClient, uuid: str, num: str) -> SettingRange:
-    data = await cli.read_gatt_char(uuid)
-
-    bio, serializer = io.BytesIO(data), NumSerializer(num)
-    result = SettingRange(*(serializer.deserialize(bio) or 0 for _ in range(3)))
-
-    assert not bio.read(1)
-
-    return result
 
 
 async def read_supported_ranges(
@@ -179,22 +187,42 @@ async def read_supported_ranges(
 
     _LOGGER.debug("Reading settings value ranges...")
 
+    async def _range(uuid: str, num: str) -> SettingRange | None:
+        if c := cli.services.get_characteristic(uuid):
+            data = await cli.read_gatt_char(c)
+
+            bio, serializer = io.BytesIO(data), NumSerializer(num)
+            result = SettingRange(*(serializer.deserialize(bio) or 0 for _ in range(3)))
+
+            assert not bio.read(1)
+            return result
+
+        _LOGGER.debug("Characteristic '%s' not found.", uuid)
+
     if MachineSettings.SPEED in settings:
-        result[TARGET_SPEED] = await _range(cli, SPEED_RANGE_UUID, "u2.01")
+        _LOGGER.debug("Reading speed range...")
+        if x := await _range(SPEED_RANGE_UUID, "u2.01"):
+            result[TARGET_SPEED] = x
 
     if MachineSettings.INCLINE in settings:
-        result[TARGET_INCLINATION] = await _range(cli, INCLINATION_RANGE_UUID, "s2.1")
+        _LOGGER.debug("Reading incline range...")
+        if x := await _range(INCLINATION_RANGE_UUID, "s2.1"):
+            result[TARGET_INCLINATION] = x
 
     if MachineSettings.RESISTANCE in settings:
-        result[TARGET_RESISTANCE] = await _range(
-            cli, RESISTANCE_LEVEL_RANGE_UUID, "s2.1"
-        )
+        _LOGGER.debug("Reading resistance range...")
+        if x := await _range(RESISTANCE_LEVEL_RANGE_UUID, "s2.1"):
+            result[TARGET_RESISTANCE] = x
 
     if MachineSettings.POWER in settings:
-        result[TARGET_POWER] = await _range(cli, POWER_RANGE_UUID, "s2")
+        _LOGGER.debug("Reading power range...")
+        if x := await _range(POWER_RANGE_UUID, "s2"):
+            result[TARGET_POWER] = x
 
     if MachineSettings.HEART_RATE in settings:
-        result[TARGET_HEART_RATE] = await _range(cli, HEART_RATE_RANGE_UUID, "u1")
+        _LOGGER.debug("Reading heart rate range...")
+        if x := await _range(HEART_RATE_RANGE_UUID, "u1"):
+            result[TARGET_HEART_RATE] = x
 
     _LOGGER.debug("Settings ranges: %s", result)
 

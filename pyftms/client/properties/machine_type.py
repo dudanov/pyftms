@@ -4,8 +4,9 @@
 from enum import Flag, auto
 
 from bleak.backends.scanner import AdvertisementData
+from bleak.uuids import normalize_uuid_str
 
-from ..const import SERVICE_UUID
+from ..const import FTMS_UUID
 from ..errors import NotFitnessMachineError
 
 
@@ -55,7 +56,7 @@ def get_machine_type_from_service_data(adv_data: AdvertisementData) -> MachineTy
         Fitness machine type.
     """
 
-    data = adv_data.service_data.get(SERVICE_UUID)
+    data = adv_data.service_data.get(normalize_uuid_str(FTMS_UUID))
 
     if data is None or len(data) != 3:
         raise NotFitnessMachineError(data)

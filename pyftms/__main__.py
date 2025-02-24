@@ -1,4 +1,4 @@
-# Copyright 2024, Sergey Dudanov
+# Copyright 2024-2025, Sergey Dudanov
 # SPDX-License-Identifier: Apache-2.0
 
 import asyncio
@@ -26,8 +26,9 @@ async def run():
         async with get_client(dev, machine_type) as c:
             print(f" 1. Device Info: {c.device_info}")
             print(f" 2. Supported settings: {c.supported_settings}")
-            print(f" 3. Supported properties: {c.supported_properties}")
-            print(f" 4. Available properties: {c.available_properties}")
+            print(f" 3. Supported ranges: {c.supported_ranges}")
+            print(f" 4. Supported properties: {c.supported_properties}")
+            print(f" 5. Available properties: {c.available_properties}")
 
     print("\nDone.")
 
