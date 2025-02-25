@@ -34,7 +34,6 @@ from .properties import (
     SettingRange,
     read_device_info,
     read_features,
-    read_supported_ranges,
 )
 from .properties.device_info import DIS_UUID
 
@@ -256,14 +255,11 @@ class FitnessMachine(ABC, PropertiesManager):
             self._device_info = await read_device_info(self._cli)
 
         if not hasattr(self, "_features"):
-            self._m_features, self._m_settings = await read_features(
-                self._cli, self._machine_type
-            )
-
-        if not hasattr(self, "_settings_ranges"):
-            self._settings_ranges = await read_supported_ranges(
-                self._cli, self._m_settings
-            )
+            (
+                self._m_features,
+                self._m_settings,
+                self._settings_ranges,
+            ) = await read_features(self._cli, self._machine_type)
 
         await self._controller.subscribe(self._cli)
         await self._updater.subscribe(self._cli, self._data_uuid)

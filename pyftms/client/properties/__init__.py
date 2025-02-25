@@ -8,7 +8,6 @@ from .features import (
     MovementDirection,
     SettingRange,
     read_features,
-    read_supported_ranges,
 )
 from .machine_type import MachineType, get_machine_type_from_service_data
 
@@ -21,6 +20,5 @@ __all__ = [
     "MovementDirection",
     "read_device_info",
     "read_features",
-    "read_supported_ranges",
     "SettingRange",
 ]

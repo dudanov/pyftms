@@ -5,9 +5,10 @@ import io
 import logging
 from enum import STRICT, IntEnum, IntFlag, auto
 from types import MappingProxyType
-from typing import Mapping, NamedTuple
+from typing import NamedTuple
 
 from bleak import BleakClient
+from bleak.backends.characteristic import BleakGATTCharacteristic
 
 from ...serializer import NumSerializer
 from ..const import (
@@ -139,10 +140,22 @@ class SettingRange(NamedTuple):
     """Step value."""
 
 
+async def _read_range(
+    cli: BleakClient, c: BleakGATTCharacteristic, format: str
+) -> SettingRange:
+    data = await cli.read_gatt_char(c)
+
+    bio, serializer = io.BytesIO(data), NumSerializer(format)
+    result = SettingRange(*(serializer.deserialize(bio) or 0 for _ in range(3)))
+
+    assert not bio.read(1)
+    return result
+
+
 async def read_features(
     cli: BleakClient,
     mt: MachineType,
-) -> tuple[MachineFeatures, MachineSettings]:
+) -> tuple[MachineFeatures, MachineSettings, MappingProxyType[str, SettingRange]]:
     _LOGGER.debug("Reading features and settings...")
 
     if (c := cli.services.get_characteristic(FEATURE_UUID)) is None:
@@ -154,48 +167,6 @@ async def read_features(
 
     features = MachineFeatures(u4.deserialize(bio))
     settings = MachineSettings(u4.deserialize(bio))
-
-    # Remove settings without ranges UUIDs
-
-    if MachineSettings.SPEED in settings:
-        if cli.services.get_characteristic(SPEED_RANGE_UUID) is None:
-            settings &= ~MachineSettings.SPEED
-            _LOGGER.debug(
-                "Speed setting has been removed. "
-                "Characteristic with a range of acceptable values not found."
-            )
-
-    if MachineSettings.INCLINE in settings:
-        if cli.services.get_characteristic(INCLINATION_RANGE_UUID) is None:
-            settings &= ~MachineSettings.INCLINE
-            _LOGGER.debug(
-                "Inclination setting has been removed. "
-                "Characteristic with a range of acceptable values not found."
-            )
-
-    if MachineSettings.RESISTANCE in settings:
-        if cli.services.get_characteristic(RESISTANCE_LEVEL_RANGE_UUID) is None:
-            settings &= ~MachineSettings.RESISTANCE
-            _LOGGER.debug(
-                "Resistance setting has been removed. "
-                "Characteristic with a range of acceptable values not found."
-            )
-
-    if MachineSettings.POWER in settings:
-        if cli.services.get_characteristic(POWER_RANGE_UUID) is None:
-            settings &= ~MachineSettings.POWER
-            _LOGGER.debug(
-                "Power setting has been removed. "
-                "Characteristic with a range of acceptable values not found."
-            )
-
-    if MachineSettings.HEART_RATE in settings:
-        if cli.services.get_characteristic(HEART_RATE_RANGE_UUID) is None:
-            settings &= ~MachineSettings.HEART_RATE
-            _LOGGER.debug(
-                "Heart Rate setting has been removed. "
-                "Characteristic with a range of acceptable values not found."
-            )
 
     # Remove untypical settings
 
@@ -211,44 +182,62 @@ async def read_features(
     elif MachineType.ROWER in mt:
         settings &= ~(MachineSettings.SPEED | MachineSettings.INCLINE)
 
-    _LOGGER.debug("Features: %s", features)
-    _LOGGER.debug("Settings: %s", settings)
+    # Remove settings without ranges UUIDs
 
-    return features, settings
-
-
-async def read_supported_ranges(
-    cli: BleakClient,
-    settings: MachineSettings,
-) -> MappingProxyType[str, SettingRange]:
-    result: Mapping[str, SettingRange] = {}
-
-    _LOGGER.debug("Reading settings value ranges...")
-
-    async def _range(uuid: str, num: str) -> SettingRange:
-        data = await cli.read_gatt_char(uuid)
-
-        bio, serializer = io.BytesIO(data), NumSerializer(num)
-        result = SettingRange(*(serializer.deserialize(bio) or 0 for _ in range(3)))
-
-        assert not bio.read(1)
-        return result
+    ranges: dict[str, SettingRange] = {}
 
     if MachineSettings.SPEED in settings:
-        result[TARGET_SPEED] = await _range(SPEED_RANGE_UUID, "u2.01")
+        if c := cli.services.get_characteristic(SPEED_RANGE_UUID):
+            ranges[TARGET_SPEED] = await _read_range(cli, c, "u2.01")
+        else:
+            settings &= ~MachineSettings.SPEED
+            _LOGGER.debug(
+                "Speed setting has been removed. "
+                "Characteristic with a range of acceptable values not found."
+            )
 
     if MachineSettings.INCLINE in settings:
-        result[TARGET_INCLINATION] = await _range(INCLINATION_RANGE_UUID, "s2.1")
+        if c := cli.services.get_characteristic(INCLINATION_RANGE_UUID):
+            ranges[TARGET_INCLINATION] = await _read_range(cli, c, "s2.1")
+        else:
+            settings &= ~MachineSettings.INCLINE
+            _LOGGER.debug(
+                "Inclination setting has been removed. "
+                "Characteristic with a range of acceptable values not found."
+            )
 
     if MachineSettings.RESISTANCE in settings:
-        result[TARGET_RESISTANCE] = await _range(RESISTANCE_LEVEL_RANGE_UUID, "s2.1")
+        if c := cli.services.get_characteristic(RESISTANCE_LEVEL_RANGE_UUID):
+            ranges[TARGET_RESISTANCE] = await _read_range(cli, c, "s2.1")
+        else:
+            settings &= ~MachineSettings.RESISTANCE
+            _LOGGER.debug(
+                "Resistance setting has been removed. "
+                "Characteristic with a range of acceptable values not found."
+            )
 
     if MachineSettings.POWER in settings:
-        result[TARGET_POWER] = await _range(POWER_RANGE_UUID, "s2")
+        if c := cli.services.get_characteristic(POWER_RANGE_UUID):
+            ranges[TARGET_POWER] = await _read_range(cli, c, "s2")
+        else:
+            settings &= ~MachineSettings.POWER
+            _LOGGER.debug(
+                "Power setting has been removed. "
+                "Characteristic with a range of acceptable values not found."
+            )
 
     if MachineSettings.HEART_RATE in settings:
-        result[TARGET_HEART_RATE] = await _range(HEART_RATE_RANGE_UUID, "u1")
+        if c := cli.services.get_characteristic(HEART_RATE_RANGE_UUID):
+            ranges[TARGET_HEART_RATE] = await _read_range(cli, c, "u1")
+        else:
+            settings &= ~MachineSettings.HEART_RATE
+            _LOGGER.debug(
+                "Heart Rate setting has been removed. "
+                "Characteristic with a range of acceptable values not found."
+            )
 
-    _LOGGER.debug("Settings ranges: %s", result)
+    _LOGGER.debug("Features: %s", features)
+    _LOGGER.debug("Settings: %s", settings)
+    _LOGGER.debug("Settings ranges: %s", ranges)
 
-    return MappingProxyType(result)
+    return features, settings, MappingProxyType(ranges)
