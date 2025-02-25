@@ -23,6 +23,7 @@ from ..const import (
     TARGET_RESISTANCE,
     TARGET_SPEED,
 )
+from ..errors import CharacteristicNotFound
 from .machine_type import MachineType
 
 _LOGGER = logging.getLogger(__name__)
@@ -139,45 +140,62 @@ class SettingRange(NamedTuple):
 
 
 async def read_features(
-    cli: BleakClient, mt: MachineType
+    cli: BleakClient,
+    mt: MachineType,
 ) -> tuple[MachineFeatures, MachineSettings]:
     _LOGGER.debug("Reading features and settings...")
 
-    try:
-        data = await cli.read_gatt_char(FEATURE_UUID)
+    if (c := cli.services.get_characteristic(FEATURE_UUID)) is None:
+        raise CharacteristicNotFound("Machine Feature")
 
-        assert len(data) == 8
+    assert len(data := await cli.read_gatt_char(c)) == 8
 
-        bio, u4 = io.BytesIO(data), NumSerializer("u4")
+    bio, u4 = io.BytesIO(data), NumSerializer("u4")
 
-        features = MachineFeatures(u4.deserialize(bio))
-        settings = MachineSettings(u4.deserialize(bio))
-
-    except Exception:
-        _LOGGER.exception("Failed reading machine features and settings.")
-        raise
+    features = MachineFeatures(u4.deserialize(bio))
+    settings = MachineSettings(u4.deserialize(bio))
 
     # Remove settings without ranges UUIDs
 
     if MachineSettings.SPEED in settings:
         if cli.services.get_characteristic(SPEED_RANGE_UUID) is None:
             settings &= ~MachineSettings.SPEED
+            _LOGGER.debug(
+                "Speed setting has been removed. "
+                "Characteristic with a range of acceptable values not found."
+            )
 
     if MachineSettings.INCLINE in settings:
         if cli.services.get_characteristic(INCLINATION_RANGE_UUID) is None:
             settings &= ~MachineSettings.INCLINE
+            _LOGGER.debug(
+                "Inclination setting has been removed. "
+                "Characteristic with a range of acceptable values not found."
+            )
 
     if MachineSettings.RESISTANCE in settings:
         if cli.services.get_characteristic(RESISTANCE_LEVEL_RANGE_UUID) is None:
             settings &= ~MachineSettings.RESISTANCE
+            _LOGGER.debug(
+                "Resistance setting has been removed. "
+                "Characteristic with a range of acceptable values not found."
+            )
 
     if MachineSettings.POWER in settings:
         if cli.services.get_characteristic(POWER_RANGE_UUID) is None:
             settings &= ~MachineSettings.POWER
+            _LOGGER.debug(
+                "Power setting has been removed. "
+                "Characteristic with a range of acceptable values not found."
+            )
 
     if MachineSettings.HEART_RATE in settings:
         if cli.services.get_characteristic(HEART_RATE_RANGE_UUID) is None:
             settings &= ~MachineSettings.HEART_RATE
+            _LOGGER.debug(
+                "Heart Rate setting has been removed. "
+                "Characteristic with a range of acceptable values not found."
+            )
 
     # Remove untypical settings
 

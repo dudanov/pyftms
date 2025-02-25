@@ -6,6 +6,11 @@ class FtmsError(Exception):
     """Base FTMS error"""
 
 
+class CharacteristicNotFound(FtmsError):
+    def __init__(self, name: str) -> None:
+        super().__init__(f"Mandatory characteristic '{name}' not found.")
+
+
 class NotFitnessMachineError(FtmsError):
     """
     An exception if the FTMS service is not supported by the Bluetooth device.
