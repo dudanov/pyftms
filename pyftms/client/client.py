@@ -220,19 +220,19 @@ class FitnessMachine(ABC, PropertiesManager):
         """Ranges of supported settings."""
         return self._settings_ranges
 
+    def _on_disconnect(self, cli: BleakClient) -> None:
+        _LOGGER.debug("Client disconnected. Reset updaters states.")
+
+        del self._cli
+        self._updater.reset()
+        self._controller.reset()
+
+        if self._disconnect_cb:
+            self._disconnect_cb(self)
+
     async def _connect(self) -> None:
         if not self._need_connect or self.is_connected:
             return
-
-        def _on_disconnect(cli: BleakClient) -> None:
-            _LOGGER.debug("Client disconnected. Reset updaters states.")
-
-            del self._cli
-            self._updater.reset()
-            self._controller.reset()
-
-            if self._disconnect_cb:
-                self._disconnect_cb(self)
 
         await close_stale_connections(self._device)
 
@@ -242,7 +242,7 @@ class FitnessMachine(ABC, PropertiesManager):
             client_class=BleakClient,
             device=self._device,
             name=self.name,
-            disconnected_callback=_on_disconnect,
+            disconnected_callback=self._on_disconnect,
             # we needed only two services: `Fitness Machine Service` and `Device Information Service`
             services=[c.FTMS_UUID, DIS_UUID],
         )
