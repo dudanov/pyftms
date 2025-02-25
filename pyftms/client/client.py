@@ -80,12 +80,14 @@ class FitnessMachine(ABC, PropertiesManager):
         timeout: float = 2.0,
         on_ftms_event: FtmsCallback | None = None,
         on_disconnect: DisconnectCallback | None = None,
+        **kwargs: Any,
     ) -> None:
         super().__init__(on_ftms_event)
 
         self._need_connect = False
         self._timeout = timeout
         self._disconnect_cb = on_disconnect
+        self._kwargs = kwargs
 
         self.set_ble_device_and_advertisement_data(ble_device, adv_data)
 
@@ -245,6 +247,7 @@ class FitnessMachine(ABC, PropertiesManager):
             disconnected_callback=self._on_disconnect,
             # we needed only two services: `Fitness Machine Service` and `Device Information Service`
             services=[c.FTMS_UUID, DIS_UUID],
+            kwargs=self._kwargs,
         )
 
         _LOGGER.debug("Connection success.")

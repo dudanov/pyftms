@@ -4,11 +4,13 @@
 import asyncio
 import logging
 from collections.abc import AsyncIterator
+from typing import Any
 
 from bleak import BleakScanner
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
 from bleak.exc import BleakDeviceNotFoundError
+from bleak.uuids import normalize_uuid_str
 
 from .backends import (
     ControlEvent,
@@ -21,6 +23,7 @@ from .backends import (
     UpdateEventData,
 )
 from .client import DisconnectCallback, FitnessMachine
+from .const import FTMS_UUID
 from .errors import NotFitnessMachineError
 from .machines import get_machine
 from .manager import PropertiesManager
@@ -42,6 +45,7 @@ def get_client(
     timeout: float = 2,
     on_ftms_event: FtmsCallback | None = None,
     on_disconnect: DisconnectCallback | None = None,
+    **kwargs: Any,
 ) -> FitnessMachine:
     """
     Creates an `FitnessMachine` instance from [Bleak](https://bleak.readthedocs.io/) discovered
@@ -53,6 +57,7 @@ def get_client(
     - `timeout` - Control operation timeout. Defaults to 2.0s.
     - `on_ftms_event` - Callback for receiving fitness machine events.
     - `on_disconnect` - Disconnection callback.
+    - `**kwargs` - Additional keyword arguments for backwards compatibility.
 
     Return:
     - `FitnessMachine` instance.
@@ -72,17 +77,20 @@ def get_client(
         timeout=timeout,
         on_ftms_event=on_ftms_event,
         on_disconnect=on_disconnect,
+        kwargs=kwargs,
     )
 
 
 async def discover_ftms_devices(
     discover_time: float = 10,
+    **kwargs: Any,
 ) -> AsyncIterator[tuple[BLEDevice, MachineType]]:
     """
     Discover FTMS devices.
 
     Parameters:
     - `discover_time` - Discover time. Defaults to 10s.
+    - `**kwargs` - Additional keyword arguments for backwards compatibility.
 
     Return:
     - `AsyncIterator[tuple[BLEDevice, MachineType]]` async generator of `BLEDevice` and `MachineType` tuples.
@@ -90,7 +98,10 @@ async def discover_ftms_devices(
 
     devices: set[str] = set()
 
-    async with BleakScanner() as scanner:
+    async with BleakScanner(
+        service_uuids=[normalize_uuid_str(FTMS_UUID)],
+        kwargs=kwargs,
+    ) as scanner:
         try:
             async with asyncio.timeout(discover_time):
                 async for dev, adv in scanner.advertisement_data():
@@ -126,6 +137,7 @@ async def get_client_from_address(
     timeout: float = 2,
     on_ftms_event: FtmsCallback | None = None,
     on_disconnect: DisconnectCallback | None = None,
+    **kwargs: Any,
 ) -> FitnessMachine:
     """
     Scans for fitness machine with specified BLE address. On success creates and return an `FitnessMachine` instance.
@@ -136,12 +148,13 @@ async def get_client_from_address(
     - `timeout` - Control operation timeout. Defaults to 2.0s.
     - `on_ftms_event` - Callback for receiving fitness machine events.
     - `on_disconnect` - Disconnection callback.
+    - `**kwargs` - Additional keyword arguments for backwards compatibility.
 
     Return:
     - `FitnessMachine` instance if device found successfully.
     """
 
-    async for dev, machine_type in discover_ftms_devices(scan_timeout):
+    async for dev, machine_type in discover_ftms_devices(scan_timeout, kwargs=kwargs):
         if dev.address.lower() == address.lower():
             return get_client(
                 dev,
@@ -149,6 +162,7 @@ async def get_client_from_address(
                 timeout=timeout,
                 on_ftms_event=on_ftms_event,
                 on_disconnect=on_disconnect,
+                kwargs=kwargs,
             )
 
     raise BleakDeviceNotFoundError(address)
