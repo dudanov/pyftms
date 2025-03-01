@@ -67,10 +67,10 @@ class FitnessMachine(ABC, PropertiesManager):
 
     # Static device info
 
-    _device_info: DeviceInfo
-    _m_features: MachineFeatures
-    _m_settings: MachineSettings
-    _settings_ranges: MappingProxyType[str, SettingRange]
+    _device_info: DeviceInfo = {}
+    _m_features: MachineFeatures = MachineFeatures(0)
+    _m_settings: MachineSettings = MachineSettings(0)
+    _settings_ranges: MappingProxyType[str, SettingRange] = MappingProxyType({})
 
     def __init__(
         self,
@@ -120,6 +120,14 @@ class FitnessMachine(ABC, PropertiesManager):
 
             if self._cb:
                 self._cb(UpdateEvent("update", {"rssi": adv_data.rssi}))
+
+    @property
+    def unique_id(self) -> str:
+        """Unique ID"""
+
+        return self.device_info.get(
+            "serial_number", self.address.replace(":", "").lower()
+        )
 
     @property
     def need_connect(self) -> bool:
@@ -184,15 +192,17 @@ class FitnessMachine(ABC, PropertiesManager):
     @property
     def device_info(self) -> DeviceInfo:
         """Device Information."""
+
         return self._device_info
 
     @property
     def machine_type(self) -> MachineType:
         """Machine type."""
+
         return self._machine_type
 
     @cached_property
-    def supported_properties(self) -> tuple[str, ...]:
+    def supported_properties(self) -> list[str]:
         """
         Properties that supported by this machine.
         Based on **Machine Features** report.
@@ -200,26 +210,33 @@ class FitnessMachine(ABC, PropertiesManager):
         *May contain both meaningless properties and may not contain
         some properties that are supported by the machine.*
         """
+
         x = self._get_supported_properties(self._m_features)
+
         if self.training_status is not None:
             x.append(c.TRAINING_STATUS)
-        return tuple(x)
+
+        return x
 
     @cached_property
-    def available_properties(self) -> tuple[str, ...]:
+    def available_properties(self) -> list[str]:
         """All properties that *MAY BE* supported by this machine type."""
+
         x = self._get_supported_properties()
         x.append(c.TRAINING_STATUS)
-        return tuple(x)
+
+        return x
 
     @cached_property
-    def supported_settings(self) -> tuple[str, ...]:
+    def supported_settings(self) -> list[str]:
         """Supported settings."""
-        return tuple(ControlModel._get_features(self._m_settings))
+
+        return ControlModel._get_features(self._m_settings)
 
     @property
     def supported_ranges(self) -> MappingProxyType[str, SettingRange]:
         """Ranges of supported settings."""
+
         return self._settings_ranges
 
     def _on_disconnect(self, cli: BleakClient) -> None:
@@ -254,10 +271,10 @@ class FitnessMachine(ABC, PropertiesManager):
 
         # Reading necessary static fitness machine information
 
-        if not hasattr(self, "_device_info"):
+        if not self._device_info:
             self._device_info = await read_device_info(self._cli)
 
-        if not hasattr(self, "_features"):
+        if not self._m_features:
             (
                 self._m_features,
                 self._m_settings,
