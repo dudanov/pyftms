@@ -1,27 +1,37 @@
 [project]
 name = "pyftms"
 version = "0.4.13"
-keywords = [ "bluetooth", "ftms", "fitness", "fitshow", "client", "async" ]
+description = "Fitness Machine Service client library."
 license = "Apache-2.0"
+readme = "README.md"
 authors = [
   { name = "Sergey Dudanov", email = "sergey.dudanov@gmail.com" },
 ]
 maintainers = [
   { name = "Sergey Dudanov", email = "sergey.dudanov@gmail.com" },
 ]
-readme = "README.md"
-description = "Python Fitness Machine Service client library."
+keywords = [
+    "async",
+    "bluetooth",
+    "client",
+    "fitness",
+    "fitshow",
+    "ftms",
+]
 requires-python = ">=3.12,<3.14"
 dependencies = [
     "bleak>=0.21.0",
     "bleak-retry-connector>=3.5.0",
 ]
-dynamic = [ "classifiers", "dependencies" ]
+dynamic = [
+    "classifiers",
+    "dependencies",
+]
 
 [project.urls]
+documentation = "https://github.com/dudanov/pyftms"
 homepage = "https://github.com/dudanov/pyftms"
 repository = "https://github.com/dudanov/pyftms"
-documentation = "https://github.com/dudanov/pyftms"
 
 [tool.poetry]
 requires-poetry = ">=2.0"
@@ -44,12 +54,12 @@ optional = true
 pdoc = "*"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.2.2"
-tox = "^4.16.0"
-ruff = ">=0.5.2,<0.10.0"
 isort = ">=5.13.2,<7.0.0"
-pytest-md = "^0.2.0"
+pytest = "^8.2.2"
 pytest-emoji = "^0.2.0"
+pytest-md = "^0.2.0"
+ruff = ">=0.5.2,<0.10.0"
+tox = "^4.16.0"
 
 [build-system]
 requires = ["poetry-core"]
