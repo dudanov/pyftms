@@ -1,7 +1,7 @@
 [project]
 name = "pyftms"
 version = "0.4.13"
-description = "Fitness Machine Service client library."
+description = "Bluetooth Fitness Machine Service async client library."
 license = "Apache-2.0"
 readme = "README.md"
 authors = [
