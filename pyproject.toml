@@ -29,8 +29,9 @@ dynamic = [
 ]
 
 [project.urls]
-documentation = "https://github.com/dudanov/pyftms"
+documentation = "https://dudanov.github.io/pyftms/pyftms.html"
 homepage = "https://github.com/dudanov/pyftms"
+issuetracker = "https://github.com/dudanov/pyftms/issues"
 repository = "https://github.com/dudanov/pyftms"
 
 [tool.poetry]
