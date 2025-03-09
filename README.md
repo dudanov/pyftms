@@ -1,6 +1,6 @@
-# PyFTMS - Python Fitness Machine Service client library
+# PyFTMS - Bluetooth Fitness Machine Service async client library
 
-**PyFTMS** is a Python client library for the **FTMS service**, which is a standard for fitness equipment with a Bluetooth interface. **Bleak** is used as the Bluetooth library. Currently four main types of fitness machines are supported:
+**PyFTMS** is a Python client library for the **FTMS** service, which is a standard for fitness equipment with a Bluetooth interface. **Bleak** is used as the Bluetooth library. Currently four main types of fitness machines are supported:
  1. **Treadmill**
  2. **Cross Trainer** (Elliptical Trainer)
  3. **Rower** (Rowing Machine)
