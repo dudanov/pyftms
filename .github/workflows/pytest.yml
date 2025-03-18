@@ -16,33 +16,23 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.12", "3.13"]
+        python-version:
+          - "3.12"
+          - "3.13"
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: Install uv and set the python version
+        uses: astral-sh/setup-uv@v5
         with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
           python-version: ${{ matrix.python-version }}
 
-      - name: Install poetry
-        uses: abatilo/actions-poetry@v4
-
-      - name: Setup a local virtual environment (if no poetry.toml file)
-        run: |
-          poetry config virtualenvs.create true --local
-          poetry config virtualenvs.in-project true --local
-
-      - uses: actions/cache@v4
-        name: Define a cache for the virtual environment based on the dependencies lock file
-        with:
-          path: ./.venv
-          key: venv-${{ hashFiles('poetry.lock') }}
-
-      - name: Install the project dependencies
-        run: poetry install
+      - name: Install the project
+        run: uv sync --all-extras --dev
 
       - uses: pavelzw/pytest-action@v2
         with:
-          custom-pytest: poetry run pytest
+          custom-pytest: uv run pytest

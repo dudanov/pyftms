@@ -2,13 +2,18 @@
 name = "pyftms"
 version = "0.4.13"
 description = "Bluetooth Fitness Machine Service async client library."
-license = "Apache-2.0"
-readme = "README.md"
 authors = [
   { name = "Sergey Dudanov", email = "sergey.dudanov@gmail.com" },
 ]
 maintainers = [
   { name = "Sergey Dudanov", email = "sergey.dudanov@gmail.com" },
+]
+license = "Apache-2.0"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "bleak >= 0.21",
+    "bleak-retry-connector >= 3.5",
 ]
 keywords = [
     "async",
@@ -18,27 +23,6 @@ keywords = [
     "fitshow",
     "ftms",
 ]
-requires-python = ">=3.12,<3.14"
-dependencies = [
-    "bleak>=0.21.0",
-    "bleak-retry-connector>=3.5.0",
-]
-dynamic = [
-    "classifiers",
-    "dependencies",
-]
-
-[project.urls]
-documentation = "https://dudanov.github.io/pyftms/pyftms.html"
-homepage = "https://github.com/dudanov/pyftms"
-issuetracker = "https://github.com/dudanov/pyftms/issues"
-repository = "https://github.com/dudanov/pyftms"
-
-[tool.poetry]
-requires-poetry = ">=2.0"
-packages = [
-  { include = "pyftms", from = "src" },
-]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Framework :: AsyncIO",
@@ -46,22 +30,45 @@ classifiers = [
   "Natural Language :: English",
   "Operating System :: OS Independent",
   "Topic :: Software Development :: Libraries :: Python Modules",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
 ]
 
-[tool.poetry.group.docs]
-optional = true
+[project.urls]
+"Documentation" = "https://github.com/dudanov/pyftms"
+"Home Page" = "https://github.com/dudanov/pyftms"
+"Issue Tracker" = "https://github.com/dudanov/pyftms/issues"
+"Source Code" = "https://github.com/dudanov/pyftms.git"
 
-[tool.poetry.group.docs.dependencies]
-pdoc = "*"
+[project.optional-dependencies]
+docs = [
+  "pdoc",
+]
 
-[tool.poetry.group.dev.dependencies]
-isort = ">=5.13.2,<7.0.0"
-pytest = "^8.2.2"
-pytest-emoji = "^0.2.0"
-pytest-md = "^0.2.0"
-ruff = ">=0.5.2,<0.10.0"
-tox = "^4.16.0"
+[tool.uv]
+dev-dependencies = [
+  "isort",
+  "pytest-emoji",
+  "pytest-md",
+  "pytest",
+  "ruff",
+  "tox",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.format]
+docstring-code-format = true
+indent-style = "space"
+quote-style = "double"
+
+[tool.isort]
+line_length = 80
+profile = "black"

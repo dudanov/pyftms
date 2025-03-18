@@ -13,26 +13,22 @@ jobs:
   # Build the documentation and upload the static HTML files as an artifact.
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.12"
-      - name: Install poetry
-        uses: abatilo/actions-poetry@v4
-      - name: Setup a local virtual environment (if no poetry.toml file)
-        run: |
-          poetry config virtualenvs.create true --local
-          poetry config virtualenvs.in-project true --local
-      - uses: actions/cache@v4
-        name: Define a cache for the virtual environment based on the dependencies lock file
-        with:
-          path: ./.venv
-          key: venv-${{ hashFiles('poetry.lock') }}
-      - name: Install the project dependencies
-        run: poetry install --with docs
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up environment
+        run: uv sync --extra docs
+
       - name: Run pdoc
-        run: poetry run python -m pdoc --logo logo.svg --favicon favicon.ico -o docs/ pyftms
+        run: uv run python -m pdoc --logo logo.svg --favicon favicon.ico -o docs/ pyftms
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: docs/
@@ -42,12 +38,15 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     permissions:
       pages: write
       id-token: write
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
