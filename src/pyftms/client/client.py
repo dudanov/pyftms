@@ -286,7 +286,9 @@ class FitnessMachine(ABC, PropertiesManager):
 
     # COMMANDS
 
-    async def _write_command(self, code: ControlCode | None = None, *args, **kwargs):
+    async def _write_command(
+        self, code: ControlCode | None = None, *args, **kwargs
+    ):
         if self._need_connect:
             await self._connect()
             return await self._controller.write_command(

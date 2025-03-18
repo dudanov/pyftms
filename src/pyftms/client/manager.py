@@ -43,7 +43,9 @@ class PropertiesManager:
         """Real-time training data update handler."""
         if e.event_id == "update":
             self._properties |= e.event_data
-            self._live_properties.update(k for k, v in e.event_data.items() if v)
+            self._live_properties.update(
+                k for k, v in e.event_data.items() if v
+            )
         elif e.event_id == "setup":
             self._settings |= e.event_data
 

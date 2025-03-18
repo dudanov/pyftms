@@ -168,5 +168,9 @@ class CrossTrainerData(RealtimeSpeedData):
     """Movement Direction"""
 
     def __post_init__(self, mask: int):
-        md = MovementDirection.BACKWARD if mask & 0x8000 else MovementDirection.FORWARD
+        md = (
+            MovementDirection.BACKWARD
+            if mask & 0x8000
+            else MovementDirection.FORWARD
+        )
         object.__setattr__(self, "movement_direction", md)

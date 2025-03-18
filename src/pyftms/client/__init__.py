@@ -154,7 +154,9 @@ async def get_client_from_address(
     - `FitnessMachine` instance if device found successfully.
     """
 
-    async for dev, machine_type in discover_ftms_devices(scan_timeout, kwargs=kwargs):
+    async for dev, machine_type in discover_ftms_devices(
+        scan_timeout, kwargs=kwargs
+    ):
         if dev.address.lower() == address.lower():
             return get_client(
                 dev,

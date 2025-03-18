@@ -77,7 +77,9 @@ def _get_model_field_serializer(field: dc.Field):
             if fmt := meta.get("format"):
                 return get_serializer(fmt)
 
-            raise TypeError(f"Format string for field '{field.name}' is required.")
+            raise TypeError(
+                f"Format string for field '{field.name}' is required."
+            )
 
         if issubclass(type_, BaseModel):
             return get_serializer(type_)
@@ -87,7 +89,9 @@ def _get_model_field_serializer(field: dc.Field):
     return _get_serializer(type_)
 
 
-def _get_model_serializers(cls: type["BaseModel"]) -> MappingProxyType[str, Serializer]:
+def _get_model_serializers(
+    cls: type["BaseModel"],
+) -> MappingProxyType[str, Serializer]:
     """Generate tuples of Fields and its Serializers."""
     if (serializers_ := getattr(cls, "_model_serializers", None)) is None:
         result: dict[str, Serializer] = {}
@@ -96,7 +100,9 @@ def _get_model_serializers(cls: type["BaseModel"]) -> MappingProxyType[str, Seri
             if field.metadata:
                 result[field.name] = _get_model_field_serializer(field)
 
-        setattr(cls, "_model_serializers", serializers_ := MappingProxyType(result))
+        setattr(
+            cls, "_model_serializers", serializers_ := MappingProxyType(result)
+        )
 
     return serializers_
 
@@ -184,7 +190,9 @@ class BaseModel:
                     if (tp := get_args(tp)[0]) is None:
                         raise TypeError("Failed to get first type.")
 
-                if (bit := meta.get("features_bit")) is None or features & (1 << bit):
+                if (bit := meta.get("features_bit")) is None or features & (
+                    1 << bit
+                ):
                     if isinstance(tp, type) and issubclass(tp, BaseModel):
                         _get_cls_features(tp)
                         continue
@@ -203,7 +211,9 @@ class BaseModel:
             meta = cast(ModelMeta, field.metadata)
 
             if (num := meta.get("num")) and len(val) != num:
-                raise ValueError(f"Length of field '{field.name}' must be {num}.")
+                raise ValueError(
+                    f"Length of field '{field.name}' must be {num}."
+                )
 
     @classmethod
     def _get_serializer(cls) -> Serializer[Self]:

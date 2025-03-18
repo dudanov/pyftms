@@ -22,7 +22,13 @@ from ...models import (
     TrainingStatusFlags,
     TrainingStatusModel,
 )
-from ..const import CONTROL_POINT_UUID, PAUSE, STATUS_UUID, STOP, TRAINING_STATUS_UUID
+from ..const import (
+    CONTROL_POINT_UUID,
+    PAUSE,
+    STATUS_UUID,
+    STOP,
+    TRAINING_STATUS_UUID,
+)
 from .event import (
     ControlEvent,
     FtmsCallback,
@@ -62,7 +68,11 @@ def _simple_status_events(m: MachineStatusModel) -> ControlEvent | None:
             return ControlEvent(event_id="reset", event_source="other")
 
         case MachineStatusCode.STOP_PAUSE:
-            value = STOP if StopPauseCode(m.stop_pause) == StopPauseCode.STOP else PAUSE
+            value = (
+                STOP
+                if StopPauseCode(m.stop_pause) == StopPauseCode.STOP
+                else PAUSE
+            )
             return ControlEvent(event_id=value, event_source="user")
 
         case MachineStatusCode.STOP_SAFETY:
@@ -79,7 +89,11 @@ def _simple_control_events(m: ControlModel) -> ControlEvent | None:
             return ControlEvent(event_id="reset", event_source="callback")
 
         case ControlCode.STOP_PAUSE:
-            value = STOP if StopPauseCode(m.stop_pause) == StopPauseCode.STOP else PAUSE
+            value = (
+                STOP
+                if StopPauseCode(m.stop_pause) == StopPauseCode.STOP
+                else PAUSE
+            )
             return ControlEvent(event_id=value, event_source="callback")
 
         case ControlCode.START_RESUME:
@@ -216,7 +230,9 @@ class MachineController:
 
         return ResultCode.SUCCESS
 
-    def _on_machine_status(self, c: BleakGATTCharacteristic, data: bytearray) -> None:
+    def _on_machine_status(
+        self, c: BleakGATTCharacteristic, data: bytearray
+    ) -> None:
         """Machine Status notification callback."""
         bio = io.BytesIO(data)
         status = MachineStatusModel._deserialize(bio)
@@ -241,7 +257,9 @@ class MachineController:
 
         self._cb(event)
 
-    def _on_training_status(self, c: BleakGATTCharacteristic, data: bytearray) -> None:
+    def _on_training_status(
+        self, c: BleakGATTCharacteristic, data: bytearray
+    ) -> None:
         """Training Status notification callback."""
         bio = io.BytesIO(data)
         status = TrainingStatusModel._deserialize(bio)
@@ -250,7 +268,9 @@ class MachineController:
 
         if TrainingStatusFlags.STRING_PRESENT in status.flags:
             if b := bio.read():
-                status_data["training_status_string"] = b.decode(encoding="utf-8")
+                status_data["training_status_string"] = b.decode(
+                    encoding="utf-8"
+                )
 
         event = UpdateEvent(event_id="update", event_data=status_data)
 

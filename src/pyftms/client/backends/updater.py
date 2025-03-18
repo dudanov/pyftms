@@ -17,7 +17,9 @@ _LOGGER = logging.getLogger(__name__)
 class DataUpdater:
     _serializer: ModelSerializer[RealtimeData]
 
-    def __init__(self, model: type[RealtimeData], callback: FtmsCallback) -> None:
+    def __init__(
+        self, model: type[RealtimeData], callback: FtmsCallback
+    ) -> None:
         self._cb = callback
         self._serializer = get_serializer(model)
         self._prev: dict[str, Any] = {}

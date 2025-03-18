@@ -155,7 +155,9 @@ async def _read_range(
 async def read_features(
     cli: BleakClient,
     mt: MachineType,
-) -> tuple[MachineFeatures, MachineSettings, MappingProxyType[str, SettingRange]]:
+) -> tuple[
+    MachineFeatures, MachineSettings, MappingProxyType[str, SettingRange]
+]:
     _LOGGER.debug("Reading features and settings...")
 
     if (c := cli.services.get_characteristic(FEATURE_UUID)) is None:

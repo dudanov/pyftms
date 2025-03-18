@@ -48,7 +48,9 @@ class MachineType(Flag):
     """Indoor Bike Machine."""
 
 
-def get_machine_type_from_service_data(adv_data: AdvertisementData) -> MachineType:
+def get_machine_type_from_service_data(
+    adv_data: AdvertisementData,
+) -> MachineType:
     """Returns fitness machine type from Bluetooth advertisement data.
 
     Parameters:

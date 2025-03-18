@@ -2,7 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from .list import ListSerializer
-from .model import BaseModel, ModelMeta, ModelSerializer, get_serializer, model_meta
+from .model import (
+    BaseModel,
+    ModelMeta,
+    ModelSerializer,
+    get_serializer,
+    model_meta,
+)
 from .num import FtmsNumbers, NumSerializer
 from .serializer import Serializer
 
